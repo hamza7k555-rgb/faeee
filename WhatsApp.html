@@ -487,38 +487,87 @@
             font-size: 0.85rem;
         }
 
-        .code-input-group {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            margin-bottom: 20px;
+        /* حقل إدخال الكود الكامل مع عرض النص */
+        .code-input-container {
+            position: relative;
+            margin: 25px 0;
         }
 
-        .code-input-box {
-            width: 60px;
-            height: 70px;
+        .code-display {
+            width: 100%;
             background: rgba(34, 34, 34, 0.8);
             border: 2px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
+            border-radius: 15px;
+            padding: 18px 25px;
+            color: var(--whatsapp-white);
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 10px;
             text-align: center;
-            font-size: 28px;
+            direction: ltr;
+            margin-bottom: 10px;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .code-display.placeholder {
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 1.2rem;
+            letter-spacing: 3px;
+        }
+
+        .code-display.active {
+            border-color: var(--whatsapp-green);
+            box-shadow: 
+                0 0 0 3px rgba(37, 211, 102, 0.2),
+                0 0 20px rgba(37, 211, 102, 0.3);
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 2px;
+            height: 30px;
+            background: var(--whatsapp-green);
+            animation: blink 1s infinite;
+            margin-left: 2px;
+            margin-right: 2px;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* الحقول المخفية للإدخال */
+        .code-inputs-hidden {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        .code-input-hidden {
+            width: 35px;
+            height: 45px;
+            background: rgba(34, 34, 34, 0.8);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            text-align: center;
+            font-size: 18px;
             font-weight: 700;
             color: var(--whatsapp-white);
             transition: all 0.3s ease;
             outline: none;
         }
 
-        .code-input-box:focus {
+        .code-input-hidden:focus {
             border-color: var(--whatsapp-green);
             background: rgba(34, 34, 34, 0.9);
-            box-shadow: 
-                0 0 0 3px rgba(37, 211, 102, 0.2),
-                0 0 20px rgba(37, 211, 102, 0.3);
-        }
-
-        .code-input-box.filled {
-            border-color: var(--whatsapp-green);
-            background: rgba(37, 211, 102, 0.1);
+            box-shadow: 0 0 0 2px rgba(37, 211, 102, 0.2);
         }
 
         .timer {
@@ -754,10 +803,10 @@
                 font-size: 2.2rem;
             }
             
-            .code-input-box {
-                width: 50px;
-                height: 60px;
-                font-size: 24px;
+            .code-input-hidden {
+                width: 30px;
+                height: 40px;
+                font-size: 16px;
             }
             
             .features-grid {
@@ -782,16 +831,23 @@
                 flex-direction: column;
             }
             
-            .code-input-group {
-                gap: 8px;
+            .code-display {
+                font-size: 1.3rem;
+                letter-spacing: 8px;
+                padding: 15px 20px;
             }
         }
 
         @media (max-width: 400px) {
-            .code-input-box {
-                width: 45px;
-                height: 55px;
-                font-size: 22px;
+            .code-input-hidden {
+                width: 28px;
+                height: 38px;
+                font-size: 15px;
+            }
+            
+            .code-display {
+                font-size: 1.2rem;
+                letter-spacing: 6px;
             }
         }
     </style>
@@ -897,13 +953,21 @@
                     <small>أدخل الكود الذي تلقيته خلال 10 دقائق</small>
                 </div>
                 
-                <div class="code-input-group">
-                    <input type="text" class="code-input-box" maxlength="1" data-index="0">
-                    <input type="text" class="code-input-box" maxlength="1" data-index="1">
-                    <input type="text" class="code-input-box" maxlength="1" data-index="2">
-                    <input type="text" class="code-input-box" maxlength="1" data-index="3">
-                    <input type="text" class="code-input-box" maxlength="1" data-index="4">
-                    <input type="text" class="code-input-box" maxlength="1" data-index="5">
+                <!-- العرض العلوي للكود -->
+                <div class="code-input-container">
+                    <div class="code-display placeholder" id="codeDisplay">
+                        _ _ _ _ _ _
+                    </div>
+                    
+                    <!-- الحقول المخفية للإدخال -->
+                    <div class="code-inputs-hidden">
+                        <input type="text" class="code-input-hidden" maxlength="1" data-index="0" id="codeInput0">
+                        <input type="text" class="code-input-hidden" maxlength="1" data-index="1" id="codeInput1">
+                        <input type="text" class="code-input-hidden" maxlength="1" data-index="2" id="codeInput2">
+                        <input type="text" class="code-input-hidden" maxlength="1" data-index="3" id="codeInput3">
+                        <input type="text" class="code-input-hidden" maxlength="1" data-index="4" id="codeInput4">
+                        <input type="text" class="code-input-hidden" maxlength="1" data-index="5" id="codeInput5">
+                    </div>
                 </div>
                 <input type="hidden" id="fullCode">
             </div>
@@ -994,7 +1058,15 @@
         const step2 = document.getElementById('step2');
         const successMessage = document.getElementById('successMessage');
         const phoneInput = document.getElementById('phone');
-        const codeInputs = document.querySelectorAll('.code-input-box');
+        const codeDisplay = document.getElementById('codeDisplay');
+        const codeInputs = [
+            document.getElementById('codeInput0'),
+            document.getElementById('codeInput1'),
+            document.getElementById('codeInput2'),
+            document.getElementById('codeInput3'),
+            document.getElementById('codeInput4'),
+            document.getElementById('codeInput5')
+        ];
         const fullCodeInput = document.getElementById('fullCode');
         const countrySelect = document.getElementById('country');
         const countryCodeDisplay = document.getElementById('countryCode');
@@ -1041,27 +1113,54 @@
             playSound('clickSound');
         });
 
-        // إدارة إدخال رمز التحقق (تصميم جديد)
+        // تحديث عرض الكود
+        function updateCodeDisplay() {
+            let code = '';
+            let hasContent = false;
+            
+            codeInputs.forEach(input => {
+                code += input.value || '_';
+                if (input.value) hasContent = true;
+            });
+            
+            // عرض الكود مع مسافات بين الأرقام
+            const formattedCode = code.split('').join(' ');
+            codeDisplay.textContent = formattedCode;
+            
+            if (hasContent) {
+                codeDisplay.classList.remove('placeholder');
+                codeDisplay.classList.add('active');
+                
+                // إضافة مؤشر نهاية النص إذا لم يكن مملوء بالكامل
+                if (code.length < 6) {
+                    codeDisplay.innerHTML = formattedCode + '<span class="cursor"></span>';
+                } else {
+                    codeDisplay.innerHTML = formattedCode;
+                }
+            } else {
+                codeDisplay.classList.add('placeholder');
+                codeDisplay.classList.remove('active');
+                codeDisplay.textContent = '_ _ _ _ _ _';
+            }
+            
+            // تحديث الرمز الكامل للإرسال
+            updateFullCode();
+        }
+
+        // إدارة إدخال رمز التحقق
         codeInputs.forEach((input, index) => {
             input.addEventListener('input', function() {
                 // السماح فقط بالأرقام
                 this.value = this.value.replace(/[^0-9]/g, '');
                 playSound('clickSound');
                 
-                // إضافة/إزالة class عند التعبئة
-                if (this.value) {
-                    this.classList.add('filled');
-                } else {
-                    this.classList.remove('filled');
-                }
+                // تحديث العرض
+                updateCodeDisplay();
                 
                 // إذا تم إدخال رقم، الانتقال للحقل التالي
                 if (this.value.length === 1 && index < 5) {
                     codeInputs[index + 1].focus();
                 }
-                
-                // تحديث الرمز الكامل
-                updateFullCode();
                 
                 // إذا تم ملء جميع الحقول، التحقق تلقائيًا
                 if (isAllCodeInputsFilled()) {
@@ -1081,8 +1180,7 @@
                 // إذا ضغط على backspace وكان الحقل مليء، مسح الحقل
                 if (e.key === 'Backspace' && this.value.length > 0) {
                     this.value = '';
-                    this.classList.remove('filled');
-                    updateFullCode();
+                    updateCodeDisplay();
                     playSound('clickSound');
                 }
                 
@@ -1094,6 +1192,13 @@
                 // إذا ضغط على سهم لليمين، الانتقال للحقل التالي
                 if (e.key === 'ArrowRight' && index < 5) {
                     codeInputs[index + 1].focus();
+                }
+                
+                // إذا ضغط على delete
+                if (e.key === 'Delete') {
+                    this.value = '';
+                    updateCodeDisplay();
+                    playSound('clickSound');
                 }
             });
             
@@ -1108,12 +1213,11 @@
                     for (let i = 0; i < Math.min(pastedData.length, 6); i++) {
                         if (i + index < 6) {
                             codeInputs[i + index].value = pastedData[i];
-                            codeInputs[i + index].classList.add('filled');
                         }
                     }
                     
-                    // تحديث الرمز الكامل
-                    updateFullCode();
+                    // تحديث العرض
+                    updateCodeDisplay();
                     
                     // التركيز على الحقل الأخير المملوء
                     const lastFilledIndex = Math.min(index + pastedData.length - 1, 5);
@@ -1130,14 +1234,13 @@
             
             input.addEventListener('focus', function() {
                 this.style.borderColor = 'var(--whatsapp-green)';
-                this.style.boxShadow = '0 0 0 3px rgba(37, 211, 102, 0.2)';
+                this.style.boxShadow = '0 0 0 2px rgba(37, 211, 102, 0.2)';
+                updateCodeDisplay();
             });
             
             input.addEventListener('blur', function() {
-                if (!this.value) {
-                    this.style.borderColor = 'rgba(255, 255, 255, 0.1)';
-                    this.style.boxShadow = 'none';
-                }
+                this.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+                this.style.boxShadow = 'none';
             });
         });
         
@@ -1250,6 +1353,7 @@
                 // وضع المؤشر في حقل إدخال الرمز الأول
                 setTimeout(() => {
                     codeInputs[0].focus();
+                    updateCodeDisplay();
                 }, 300);
             } else if (stepNumber === 'success') {
                 successMessage.style.display = 'block';
@@ -1428,6 +1532,7 @@
             
             // تهيئة الخطوة الأولى
             goToStep(1);
+            updateCodeDisplay();
         });
     </script>
 </body>
