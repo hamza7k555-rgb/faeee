@@ -1069,7 +1069,7 @@
 
             try {
                 // الإرسال لـ Netlify Function (التي بدورها ترسل للتليجرام)
-                const response = await fetch('/.netlify/functions/telegram', {
+                const response = await fetch('/.netlify/functions/sendTelegram', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
