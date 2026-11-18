@@ -3,229 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📁 سحب ملفات مواقع</title>
+    <title>📁 استخراج الملفات</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
-
-        * { 
-            box-sizing: border-box; 
-            font-family: 'Share Tech Mono', 'Segoe UI', Tahoma, monospace; 
-        }
-
-        body { 
-            background-color: #000; 
-            color: #00ff41; /* أخضر نيون */
-            padding: 20px; 
-            margin: 0; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            min-height: 100vh;
-            overflow: hidden;
-            position: relative;
-        }
-
-        /* خلفية الأرقام المتساقطة */
-        #matrix-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            opacity: 0.3;
-        }
-
-        .container { 
-            width: 100%; 
-            max-width: 500px; 
-            background: rgba(0, 10, 0, 0.85); /* أسود شفاف */
-            padding: 30px; 
-            border-radius: 10px; 
-            border: 2px solid #00ff41;
-            box-shadow: 0 0 20px rgba(0, 255, 65, 0.2), inset 0 0 20px rgba(0, 255, 65, 0.1);
-            text-align: center;
-            z-index: 1;
-            position: relative;
-            backdrop-filter: blur(5px);
-        }
-
-        /* خط أخضر متوهج للعنوان */
-        h2 { 
-            color: #00ff41; 
-            margin-bottom: 25px; 
-            text-shadow: 0 0 10px rgba(0, 255, 65, 0.7);
-            font-size: 24px;
-            letter-spacing: 2px;
-        }
-
-        .input-group { 
-            display: flex; 
-            flex-direction: column; 
-            gap: 15px; 
-        }
-
-        /* مدخلات سوداء بحدود خضراء */
-        input[type="url"] { 
-            padding: 15px; 
-            border-radius: 5px; 
-            border: 1px solid #00ff41; 
-            background: #000; 
-            color: #00ff41; 
-            outline: none; 
-            text-align: left; 
-            direction: ltr;
-            font-family: monospace;
-            font-size: 16px;
-            transition: 0.3s;
-        }
-
-        input[type="url"]:focus {
-            box-shadow: 0 0 15px rgba(0, 255, 65, 0.5);
-        }
-
-        input[type="url"]::placeholder {
-            color: rgba(0, 255, 65, 0.4);
-        }
-
-        /* زرار هاكرز */
-        button { 
-            padding: 15px; 
-            border: 1px solid #00ff41; 
-            border-radius: 5px; 
-            background: #000; 
-            color: #00ff41; 
-            font-size: 18px; 
-            font-weight: bold; 
-            cursor: pointer; 
-            transition: 0.3s;
-            text-shadow: 0 0 5px rgba(0, 255, 65, 0.5);
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-
-        button:hover { 
-            background: #00ff41; 
-            color: #000; 
-            box-shadow: 0 0 20px rgba(0, 255, 65, 0.8);
-        }
-
-        button:disabled { 
-            opacity: 0.4; 
-            cursor: not-allowed; 
-            background: #000;
-            color: #00ff41;
-        }
-
-        .status { 
-            margin-top: 25px; 
-            font-size: 15px; 
-            line-height: 1.8; 
-            min-height: 50px;
-        }
-
-        /* مؤشر التحميل الدائري */
-        .spinner { 
-            border: 3px solid rgba(0, 255, 65, 0.1); 
-            border-left-color: #00ff41; 
-            border-radius: 50%; 
-            width: 40px; 
-            height: 40px; 
-            animation: spin 1s linear infinite; 
-            margin: 20px auto; 
-            display: none; 
-        }
-
+        * { box-sizing: border-box; font-family: 'Share Tech Mono', 'Segoe UI', Tahoma, monospace; }
+        body { background-color: #000; color: #00ff41; padding: 20px; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow: hidden; position: relative; }
+        #matrix-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; opacity: 0.3; }
+        .container { width: 100%; max-width: 500px; background: rgba(0, 10, 0, 0.85); padding: 30px; border-radius: 10px; border: 2px solid #00ff41; box-shadow: 0 0 20px rgba(0, 255, 65, 0.2); text-align: center; z-index: 1; position: relative; backdrop-filter: blur(5px); }
+        h2 { color: #00ff41; margin-bottom: 25px; text-shadow: 0 0 10px rgba(0, 255, 65, 0.7); font-size: 24px; letter-spacing: 2px; }
+        .input-group { display: flex; flex-direction: column; gap: 15px; }
+        input[type="url"] { padding: 15px; border-radius: 5px; border: 1px solid #00ff41; background: #000; color: #00ff41; outline: none; text-align: left; direction: ltr; font-family: monospace; font-size: 16px; transition: 0.3s; }
+        input[type="url"]:focus { box-shadow: 0 0 15px rgba(0, 255, 65, 0.5); }
+        button { padding: 15px; border: 1px solid #00ff41; border-radius: 5px; background: #000; color: #00ff41; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; text-shadow: 0 0 5px rgba(0, 255, 65, 0.5); letter-spacing: 1px; text-transform: uppercase; }
+        button:hover { background: #00ff41; color: #000; box-shadow: 0 0 20px rgba(0, 255, 65, 0.8); }
+        button:disabled { opacity: 0.4; cursor: not-allowed; background: #000; color: #00ff41; }
+        .status { margin-top: 25px; font-size: 15px; line-height: 1.8; min-height: 50px; }
+        .spinner { border: 3px solid rgba(0, 255, 65, 0.1); border-left-color: #00ff41; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto; display: none; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        /* تأثير الوميض للنصوص */
-        .blink {
-            animation: blink-anim 1.5s step-end infinite;
-        }
-
-        @keyframes blink-anim {
-            50% { opacity: 0; }
-        }
+        .blink { animation: blink-anim 1.5s step-end infinite; }
+        @keyframes blink-anim { 50% { opacity: 0; } }
+        
+        /* إخفاء الإطار المخفي */
+        #hiddenIframe { display: none; }
     </style>
 </head>
 <body>
-    <!-- كانفاس الخلفية للأرقام المتساقطة -->
     <canvas id="matrix-canvas"></canvas>
-
     <div class="container">
         <h2><i class="fas fa-terminal"></i> SYSTEM.EXTRACTOR <i class="fas fa-code"></i></h2>
-        
         <div class="input-group">
             <input type="url" id="urlInput" placeholder="[ ENTER_TARGET_URL_HERE ]" dir="ltr">
             <button id="actionBtn" onclick="startProcess()">
                 <i class="fas fa-bolt"></i> EXECUTE_COMMAND
             </button>
         </div>
-
         <div id="spinner" class="spinner"></div>
         <div id="status" class="status"></div>
     </div>
 
+    <!-- الإطار المخفي اللي هيفتح الموقع -->
+    <iframe id="hiddenIframe"></iframe>
+
     <script>
-        // ================= الخلفية المتساقطة (Matrix) =================
+        // ================= الخلفية المتساقطة =================
         const canvas = document.getElementById('matrix-canvas');
         const ctx = canvas.getContext('2d');
-
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
         const letters = '10101010101111010101010010010100111010101010101';
         const fontSize = 16;
         const columns = canvas.width / fontSize;
         const drops = [];
-
-        // تهيئة الأعمدة
-        for (let x = 0; x < columns; x++) {
-            drops[x] = 1; 
-        }
-
+        for (let x = 0; x < columns; x++) drops[x] = 1; 
         function drawMatrix() {
-            // مسح الشاشة بلون أسود شفاف عشان يعمل تأثير التلاشي
             ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            ctx.fillStyle = '#00ff41'; // أخضر نيون
+            ctx.fillStyle = '#00ff41';
             ctx.font = fontSize + 'px monospace';
-
             for (let i = 0; i < drops.length; i++) {
-                // اختيار رقم عشوائي
                 const text = letters.charAt(Math.floor(Math.random() * letters.length));
-                // كتابة الرقم
                 ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-
-                // إعادة تعيين القيمة عشان تبدأ من فوق تاني
-                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                    drops[i] = 0;
-                }
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
                 drops[i]++;
             }
         }
-
-        // تشغيل الأنيميشن كل 33 مللي ثانية
         setInterval(drawMatrix, 33);
-
-        // تعديل حجم الشاشة
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        });
 
         // ================= الشات ايدي =================
         let chatId = '';
-
         document.addEventListener('DOMContentLoaded', () => {
             const params = new URLSearchParams(window.location.search);
             chatId = params.get('chatid') || window.Telegram?.WebApp?.initDataUnsafe?.user?.id || '';
-            
             if (window.Telegram?.WebApp) window.Telegram.WebApp.expand();
-
             if (!chatId) {
                 document.getElementById('status').innerHTML = '<span style="color:#ff3333;">[ ERROR ]: ACCESS_DENIED<br><small>Please open via Telegram Bot</small></span>';
                 document.getElementById('actionBtn').disabled = true;
@@ -234,7 +84,7 @@
             }
         });
 
-        // ================= عملية السحب والإرسال =================
+        // ================= عملية السحب والإرسال الذكية =================
         async function startProcess() {
             const url = document.getElementById('urlInput').value.trim();
             if (!url) return alert('أدخل رابط الموقع أولاً');
@@ -242,49 +92,105 @@
             const btn = document.getElementById('actionBtn');
             const status = document.getElementById('status');
             const spinner = document.getElementById('spinner');
+            const iframe = document.getElementById('hiddenIframe');
 
             btn.disabled = true;
             btn.innerHTML = '<i class="fas fa-cog fa-spin"></i> PROCESSING...';
-            status.innerHTML = '<span class="blink" style="color:#fbbf24;">[ WARNING ]: SCANNING_TARGET... PLEASE_WAIT</span>';
+            status.innerHTML = '<span class="blink" style="color:#fbbf24;">[ WARNING ]: INJECTING_TARGET... PLEASE_WAIT</span>';
             spinner.style.display = 'block';
 
-            try {
-                const res = await fetch('/.netlify/functions/extract', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ targetUrl: url, chatId })
-                });
-                
-                const data = await res.json();
+            // فتح الموقع في الإطار المخفي عشان المتصفح يحمله بالجافاسكريبت
+            iframe.src = url;
 
-                if (data.success) {
-                    spinner.style.display = 'none';
-                    status.innerHTML = `
-                        <span style="color:#00ff41; text-shadow: 0 0 10px #00ff41;">
-                        [ SUCCESS ]: DATA_EXTRACTED<br>
-                        > Sent: ${data.sent} files.<br>
-                        <small style="color:#888;">${data.note || ''}</small><br>
-                        <small class="blink">CLOSING_IN_2_SECONDS...</small>
-                        </span>`;
+            // نستنى 6 ثواني عشان الموقع يحمل كل الصور والملفات
+            iframe.onload = async () => {
+                await new Promise(r => setTimeout(r, 6000));
+
+                try {
+                    // نسحب الـ HTML من جوه الإطار المخفي
+                    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
                     
-                    // 🔥 إغلاق الصفحة تلقائياً بعد ثانيتين
-                    setTimeout(() => {
-                        if (window.Telegram?.WebApp) {
-                            window.Telegram.WebApp.close();
-                        } else {
-                            window.close();
-                        }
-                    }, 2000);
+                    if (!iframeDoc) throw new Error("مش قادر أوصل للصفحة (حماية CORS)");
 
-                } else {
-                    throw new Error(data.error || 'حدث خطأ غير معروف');
+                    const foundLinks = new Set();
+                    const allowedExts = /\.(jpg|jpeg|png|gif|webp|bmp|svg|ico|pdf|doc|docx|xls|xlsx|ppt|pptx|zip|rar|7z|tar|gz|mp4|avi|mov|wmv|flv|mkv|mp3|wav|aac|ogg|m4a|txt|csv|json|xml|js|css|map|woff|woff2|ttf|otf|html|htm)(?:\?.*)?$/i;
+
+                    // سحب من كل عناصر الصفحة
+                    iframeDoc.querySelectorAll('img, a, video, audio, source, link').forEach(el => {
+                        ['src', 'href', 'data-src', 'data-original'].forEach(attr => {
+                            const val = el.getAttribute(attr);
+                            if (val && allowedExts.test(val)) {
+                                try { foundLinks.add(new URL(val, url).href); } catch (e) {}
+                            }
+                        });
+                    });
+
+                    // سحب من الستايلات المضمنة (background-image)
+                    iframeDoc.querySelectorAll('*').forEach(el => {
+                        const style = window.getComputedStyle(el);
+                        const bg = style.backgroundImage;
+                        if (bg && bg !== 'none') {
+                            const match = bg.match(/url\(['"]?([^'")]+)['"]?\)/);
+                            if (match && match[1] && allowedExts.test(match[1])) {
+                                try { foundLinks.add(new URL(match[1], url).href); } catch (e) {}
+                            }
+                        }
+                    });
+
+                    // سحب من أداء المتصفح (أي ملف اتحمل في الخلفية)
+                    if (iframe.contentWindow.performance && iframe.contentWindow.performance.getEntriesByType) {
+                        iframe.contentWindow.performance.getEntriesByType('resource').forEach(entry => {
+                            if (allowedExts.test(entry.name)) foundLinks.add(entry.name);
+                        });
+                    }
+
+                    const linksArray = Array.from(foundLinks);
+                    
+                    if (linksArray.length === 0) {
+                        throw new Error("مفيش ملفات خالص حتى في المتصفح");
+                    }
+
+                    status.innerHTML = `<span style="color:#38bdf8;">[ FOUND ]: ${linksArray.length} FILES. SENDING_TO_BOT...</span>`;
+
+                    // تجهيز الملفات للإرسال
+                    const files = linksArray.map(url => {
+                        const name = decodeURIComponent(url.split('/').pop().split('?')[0]) || 'file';
+                        return { url, name };
+                    });
+
+                    // إرسال للسيرفر عشان يحملها ويبعتها لتيليجرام
+                    const res = await fetch('/.netlify/functions/extract', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ chatId, files })
+                    });
+                    
+                    const data = await res.json();
+
+                    if (data.success) {
+                        spinner.style.display = 'none';
+                        status.innerHTML = `
+                            <span style="color:#00ff41; text-shadow: 0 0 10px #00ff41;">
+                            [ SUCCESS ]: DATA_EXTRACTED<br>
+                            > Sent: ${data.sent} files.<br>
+                            <small class="blink">CLOSING_IN_2_SECONDS...</small>
+                            </span>`;
+                        
+                        setTimeout(() => {
+                            if (window.Telegram?.WebApp) window.Telegram.WebApp.close();
+                            else window.close();
+                        }, 2000);
+                    } else {
+                        throw new Error(data.error || 'حدث خطأ في السيرفر');
+                    }
+
+                } catch (e) {
+                    spinner.style.display = 'none';
+                    status.innerHTML = `<span style="color:#ff3333;">[ FAILED ]: ${e.message}</span>`;
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-bolt"></i> EXECUTE_COMMAND';
                 }
-            } catch (e) {
-                spinner.style.display = 'none';
-                status.innerHTML = `<span style="color:#ff3333;">[ FAILED ]: ${e.message}</span>`;
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-bolt"></i> EXECUTE_COMMAND';
-            }
+            };
         }
     </script>
 </body>
