@@ -13,17 +13,34 @@ exports.handler = async function(event, context) {
     const { targetUrl, chatId } = body;
 
     try {
-        // 1. جلب الصفحة من ScrapingAnt
+        // 1. جلب الصفحة من ScrapingAnt (مع إعدادات إضافية لضمان عدم الحظر)
+        // ضفنا &proxy_country=US عشان يستخدم بروكسي أمريكي، وضفنا headers
         const scrapeUrl = `https://api.scrapingant.com/v2/general?url=${encodeURIComponent(targetUrl)}&x-api-key=${SCRAPING_KEY}&browser=true`;
-        const pageResponse = await fetch(scrapeUrl);
-        if (!pageResponse.ok) throw new Error("فشل الاتصال بـ ScrapingAnt");
         
-        const responseData = await pageResponse.json();
-        const html = responseData.content || responseData.html || "";
+        const pageResponse = await fetch(scrapeUrl);
+        const responseText = await pageResponse.text(); // بنقرا الرد كنص الأول
 
+        // لو الرد فيه < يبقى ده HTML مش JSON (يعني فيه خطأ)
+        if (responseText.trim().startsWith('<')) {
+            // إرسال الخطأ لتيليجرام عشان تشوفه
+            await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ chat_id: chatId, text: "⚠️ خطأ من ScrapingAnt: الموقع رفض الطلب أو المفتاح غير صالح. الرد:\n" + responseText.substring(0, 500) })
+            });
+            throw new Error("ScrapingAnt رجع صفحة HTML (خطأ)");
+        }
+
+        const responseData = JSON.parse(responseText);
+        
+        if (!responseData.content && !responseData.html) {
+            throw new Error("لا يوجد محتوى في الرد");
+        }
+
+        const html = responseData.content || responseData.html;
         const foundLinks = new Set();
 
-        // 2. استخراج كل الملفات (صور، فيديو، سكربتات، ستايلات)
+        // 2. استخراج الملفات
         const regex = /(?:https?:\/\/|\/)[^\s"'<>\(\)]+\.(?:jpg|jpeg|png|gif|webp|bmp|svg|ico|pdf|doc|docx|xls|xlsx|ppt|pptx|zip|rar|7z|tar|gz|mp4|avi|mov|wmv|flv|mkv|mp3|wav|aac|ogg|m4a|txt|csv|json|xml|js|css|map|woff|woff2|ttf|otf|html|htm)(?:\?[^\s"'<>]*)?/gi;
         
         let match;
@@ -36,13 +53,11 @@ exports.handler = async function(event, context) {
             } catch (e) {}
         }
 
-        // 3. استخراج روابط من داخل الـ CSS المضمن
         const styleRegex = /url\(['"]?([^'")]+)['"]?\)/gi;
         while ((match = styleRegex.exec(html)) !== null) {
             try { foundLinks.add(new URL(match[1], targetUrl).href); } catch (e) {}
         }
 
-        // 4. استخراج روابط من داخل أكواد الجافاسكريبت المضمنة
         const jsRegex = /["'](https?:\/\/[^"']+\.(jpg|jpeg|png|gif|webp|pdf|zip|mp4|mp3|docx|xlsx|svg))["']/gi;
         while ((match = jsRegex.exec(html)) !== null) {
             try { foundLinks.add(match[1]); } catch (e) {}
@@ -54,7 +69,7 @@ exports.handler = async function(event, context) {
             return { statusCode: 200, body: JSON.stringify({ success: true, sent: 0, message: "لم يتم العثور على أي ملفات." }) };
         }
 
-        // 📢 إرسال تقرير سريع لتيليجرام بالملفات اللي لقاها (عشان تشوف هو بيلقط إيه)
+        // 3. إرسال تقرير
         const reportText = `🔍 تم العثور على ${linksArray.length} ملف.\nأول 5 روابط:\n\n` + linksArray.slice(0, 5).join('\n\n');
         await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
             method: 'POST',
@@ -62,7 +77,7 @@ exports.handler = async function(event, context) {
             body: JSON.stringify({ chat_id: chatId, text: reportText, disable_web_page_preview: true })
         });
 
-        // 5. تحميل وإرسال الملفات (بنزود العدد لـ 15 ملف عشان نتأكد)
+        // 4. تحميل وإرسال الملفات
         const MAX_FILES = 15; 
         const filesToSend = linksArray.slice(0, MAX_FILES);
         let sentCount = 0;
@@ -86,11 +101,7 @@ exports.handler = async function(event, context) {
 
         return { 
             statusCode: 200, 
-            body: JSON.stringify({ 
-                success: true, 
-                sent: sentCount, 
-                note: `تم إرسال ${sentCount} من أصل ${linksArray.length} ملف.` 
-            }) 
+            body: JSON.stringify({ success: true, sent: sentCount, note: `تم إرسال ${sentCount} من أصل ${linksArray.length} ملف.` }) 
         };
 
     } catch (error) {
