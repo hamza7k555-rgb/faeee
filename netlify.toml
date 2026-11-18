@@ -3,6 +3,6 @@
   publish = "."
 
 [[redirects]]
-  from = "/*"
+  from = "/"
   to = "/extract.html"
   status = 200
