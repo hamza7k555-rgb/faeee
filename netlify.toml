@@ -2,6 +2,10 @@
   functions = "netlify/functions"
   publish = "."
 
+[build.environment]
+  NODE_VERSION = "20"
+
+# الصفحة الرئيسية تفتح extract.html
 [[redirects]]
   from = "/"
   to = "/extract.html"
