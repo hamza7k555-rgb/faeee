@@ -1,89 +1,120 @@
+const axios = require('axios');
+const cheerio = require('cheerio');
+
+// كل الامتدادات الممكنة
+const ALLOWED_EXTENSIONS = /\.(jpg|jpeg|png|gif|webp|bmp|svg|ico|pdf|doc|docx|xls|xlsx|ppt|pptx|zip|rar|7z|tar|gz|mp4|avi|mov|wmv|flv|mkv|mp3|wav|aac|ogg|m4a|txt|csv|json|xml|html|htm)(\?.*)?$/i;
+
 exports.handler = async function(event) {
     const BOT_TOKEN = process.env.BOT_TOKEN;
 
-    if (!BOT_TOKEN) {
-        return { statusCode: 500, body: JSON.stringify({ success: false, error: "Bot token not configured" }) };
-    }
-    if (event.httpMethod !== 'POST') {
-        return { statusCode: 405, body: JSON.stringify({ success: false, error: "Method not allowed" }) };
-    }
+    if (!BOT_TOKEN) return { statusCode: 500, body: JSON.stringify({ success: false, error: "Bot token missing" }) };
+    if (event.httpMethod !== 'POST') return { statusCode: 405, body: JSON.stringify({ success: false, error: "Method not allowed" }) };
 
     let body;
-    try { body = JSON.parse(event.body); }
-    catch (e) { return { statusCode: 400, body: JSON.stringify({ success: false, error: "Invalid JSON" }) }; }
+    try { body = JSON.parse(event.body); } catch (e) { return { statusCode: 400, body: JSON.stringify({ success: false, error: "Invalid JSON" }) }; }
 
     const { targetUrl, chatId, fileTypes } = body;
-    if (!targetUrl || !chatId) {
-        return { statusCode: 400, body: JSON.stringify({ success: false, error: "targetUrl and chatId required" }) };
-    }
+    if (!targetUrl || !chatId) return { statusCode: 400, body: JSON.stringify({ success: false, error: "Missing params" }) };
 
     try {
-        // 1. جلب الصفحة
-        const pageResponse = await fetch(targetUrl, {
-            headers: { 
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-                'Accept': 'text/html,application/xhtml+xml,*/*;q=0.8'
+        // 1. جلب الصفحة بتنكر شديد (عشان نكسر الحماية)
+        const { data: html } = await axios.get(targetUrl, {
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+                'Accept-Language': 'en-US,en;q=0.9,ar;q=0.8',
+                'Sec-Fetch-Dest': 'document',
+                'Sec-Fetch-Mode': 'navigate',
+                'Sec-Fetch-Site': 'none',
+                'Sec-Fetch-User': '?1',
+                'Upgrade-Insecure-Requests': '1',
+                'Cache-Control': 'no-cache',
+                'Pragma': 'no-cache'
             },
-            redirect: 'follow',
-            signal: AbortSignal.timeout(7000) // لو الموقع مخدش رد في 7 ثواني يقطع
+            timeout: 10000,
+            maxRedirects: 5
         });
 
-        if (!pageResponse.ok) throw new Error(`HTTP ${pageResponse.status}`);
-        const html = await pageResponse.text();
-
-        // 2. استخراج الروابط بـ Regex (أخف وأسرع من cheerio)
+        const $ = cheerio.load(html);
         const foundLinks = new Set();
-        const urlRegex = /(?:src|href|data-src|data-original)\s*=\s*["']([^"']+)["']/gi;
-        let match;
-        while ((match = urlRegex.exec(html)) !== null) {
+        const baseUrl = new URL(targetUrl);
+
+        // دالة تحويل الروابط
+        const fixUrl = (link) => {
+            if (!link) return null;
             try {
-                const abs = new URL(match[1], targetUrl).href;
-                // فلتر الملفات المهمة فقط
-                if (/\.(jpg|jpeg|png|gif|webp|pdf|doc|docx|xls|xlsx|zip|rar|mp4|mp3|txt)(\?.*)?$/i.test(abs)) {
-                    foundLinks.add(abs);
-                }
-            } catch (e) {}
+                const abs = new URL(link, targetUrl).href;
+                return ALLOWED_EXTENSIONS.test(abs) ? abs : null;
+            } catch (e) { return null; }
+        };
+
+        // 2. الاستخراج الشرس (من كل مكان)
+        // من img و source
+        $('img, source, video, audio, a, link').each((i, el) => {
+            const attrs = ['src', 'href', 'data-src', 'data-original', 'data-lazy-src', 'data-url', 'content'];
+            attrs.forEach(attr => {
+                const link = $(el).attr(attr);
+                const fixed = fixUrl(link);
+                if (fixed) foundLinks.add(fixed);
+            });
+        });
+
+        // من الـ style
+        $('[style*="url("]').each((i, el) => {
+            const style = $(el).attr('style') || '';
+            const matches = style.match(/url\(['"]?([^'")]+)['"]?\)/g) || [];
+            matches.forEach(m => {
+                const link = m.replace(/url\(['"]?|['"]?\)/g, '');
+                const fixed = fixUrl(link);
+                if (fixed) foundLinks.add(fixed);
+            });
+        });
+
+        // من الـ Scripts والـ CSS المضمنة
+        const scriptRegex = /(https?:\/\/[^\s"'<>\(\)]+\.(jpg|jpeg|png|gif|webp|pdf|zip|mp4|mp3|docx|xlsx|svg|ico))/gi;
+        let match;
+        while ((match = scriptRegex.exec(html)) !== null) {
+            const fixed = fixUrl(match[1]);
+            if (fixed) foundLinks.add(fixed);
         }
 
         let linksArray = Array.from(foundLinks);
 
-        // 3. فلترة حسب الاختيار
+        // فلترة حسب الاختيار
         if (fileTypes && Array.isArray(fileTypes) && fileTypes.length > 0) {
+            const allowed = fileTypes.flatMap(t => t.split(',').map(x => x.trim().toLowerCase()));
             linksArray = linksArray.filter(link => {
                 const ext = link.split('?')[0].split('.').pop().toLowerCase();
-                return fileTypes.some(t => t.split(',').map(x => x.trim()).includes(ext));
+                return allowed.includes(ext);
             });
         }
 
         if (linksArray.length === 0) {
-            return { statusCode: 200, body: JSON.stringify({ success: true, total: 0, sent: 0, failed: 0, files: [], message: "لم يتم العثور على ملفات" }) };
+            return { statusCode: 200, body: JSON.stringify({ success: true, total: 0, sent: 0, failed: 0, files: [], message: "الموقع ده محمي جداً أو مفيهوش ملفات حقيقية." }) };
         }
 
-        // 4. إرسال الملفات (بحد أقصى 3 ملفات عشان نمنع الـ Timeout في أول تجربة)
-        const MAX_FILES = 3; 
+        // 3. تحميل وإرسال الملفات
         const results = { total: linksArray.length, sent: 0, failed: 0, files: [] };
-        const filesToSend = linksArray.slice(0, MAX_FILES);
+        // هنبعت 5 ملفات بس عشان Netlify ميقطعش
+        const filesToSend = linksArray.slice(0, 5); 
 
         for (const fileUrl of filesToSend) {
             const fileName = decodeURIComponent(fileUrl.split('/').pop().split('?')[0]) || 'file';
             try {
-                const fileResponse = await fetch(fileUrl, {
+                const fileResponse = await axios.get(fileUrl, {
+                    responseType: 'arraybuffer',
                     headers: { 'User-Agent': 'Mozilla/5.0', 'Referer': targetUrl },
-                    signal: AbortSignal.timeout(5000) // 5 ثواني كحد أقصى للملف
+                    timeout: 10000
                 });
                 
-                if (!fileResponse.ok) throw new Error(`HTTP ${fileResponse.status}`);
-                const buffer = Buffer.from(await fileResponse.arrayBuffer());
+                const buffer = Buffer.from(fileResponse.data);
+                const contentType = fileResponse.headers['content-type'] || 'application/octet-stream';
 
-                // رفع لتيليجرام
                 const form = new FormData();
                 form.append('chat_id', chatId);
-                form.append('document', new Blob([buffer]), fileName);
+                form.append('document', new Blob([buffer], { type: contentType }), fileName);
 
-                const tgRes = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendDocument`, {
-                    method: 'POST',
-                    body: form
-                });
+                const tgRes = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendDocument`, { method: 'POST', body: form });
                 const tgData = await tgRes.json();
 
                 if (tgData.ok) {
@@ -99,9 +130,9 @@ exports.handler = async function(event) {
             }
         }
 
-        return { statusCode: 200, body: JSON.stringify({ success: true, ...results, note: linksArray.length > 3 ? "تم إرسال أول 3 ملفات فقط لتجنب توقف السيرفر" : "" }) };
+        return { statusCode: 200, body: JSON.stringify({ success: true, ...results }) };
 
     } catch (error) {
-        return { statusCode: 500, body: JSON.stringify({ success: false, error: error.message }) };
+        return { statusCode: 500, body: JSON.stringify({ success: false, error: "الموقع رفض الاتصال: " + error.message }) };
     }
 };
