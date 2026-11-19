@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔗 اختصار الروابط</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap');
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Tajawal', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .card {
+            background: white;
+            width: 100%;
+            max-width: 400px;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+
+        .icon {
+            font-size: 50px;
+            color: #0088cc;
+            margin-bottom: 15px;
+        }
+
+        h1 {
+            font-size: 22px;
+            margin-bottom: 10px;
+            color: #1a1a1a;
+        }
+
+        p {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e4e8;
+            border-radius: 12px;
+            font-size: 16px;
+            outline: none;
+            transition: 0.3s;
+            text-align: left;
+            direction: ltr;
+            margin-bottom: 15px;
+        }
+
+        input:focus {
+            border-color: #0088cc;
+            box-shadow: 0 0 0 3px rgba(0, 136, 204, 0.1);
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: #0088cc;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #0077b3;
+        }
+
+        button:disabled {
+            background: #a0c4d8;
+            cursor: not-allowed;
+        }
+
+        .status {
+            margin-top: 20px;
+            font-size: 14px;
+            font-weight: 700;
+            min-height: 20px;
+        }
+
+        .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <div class="icon">🔗</div>
+        <h1>اختصار الروابط</h1>
+        <p>أدخل الرابط وسنقوم بإنشاء 5 روابط مختصرة وإرسالها لك في البوت.</p>
+
+        <input type="url" id="urlInput" placeholder="https://example.com" dir="ltr">
+        <button id="actionBtn" onclick="shortenLink()">
+            <span id="btnText">اختصار وإرسال</span>
+            <div class="spinner" id="spinner"></div>
+        </button>
+
+        <div class="status" id="status"></div>
+    </div>
+
+    <script>
+        let chatId = '';
+
+        // جلب الشات ايدي عند فتح الصفحة
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            chatId = params.get('chatid') || window.Telegram?.WebApp?.initDataUnsafe?.user?.id || '';
+            
+            // تمديد شاشة تيليجرام
+            if (window.Telegram?.WebApp) {
+                window.Telegram.WebApp.expand();
+            }
+
+            if (!chatId) {
+                document.getElementById('status').innerText = '❌ يرجى فتح الصفحة من داخل بوت تيليجرام.';
+                document.getElementById('status').style.color = '#dc3545';
+                document.getElementById('actionBtn').disabled = true;
+            }
+        });
+
+        async function shortenLink() {
+            const url = document.getElementById('urlInput').value.trim();
+            const status = document.getElementById('status');
+            const btn = document.getElementById('actionBtn');
+            const btnText = document.getElementById('btnText');
+            const spinner = document.getElementById('spinner');
+
+            if (!url) {
+                status.innerText = 'الرجاء إدخال رابط أولاً.';
+                status.style.color = '#dc3545';
+                return;
+            }
+
+            if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                status.innerText = 'الرابط يجب أن يبدأ بـ http:// أو https://';
+                status.style.color = '#dc3545';
+                return;
+            }
+
+            // تغيير حالة الزرار للتحميل
+            btn.disabled = true;
+            btnText.style.display = 'none';
+            spinner.style.display = 'block';
+            status.innerText = '⏳ جاري الاختصار والإرسال...';
+            status.style.color = '#0088cc';
+
+            try {
+                const response = await fetch('/.netlify/functions/shorten', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ targetUrl: url, chatId: chatId })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    status.innerText = `✅ تم إرسال ${data.count} روابط إلى البوت بنجاح!`;
+                    status.style.color = '#28a745';
+                    
+                    // إغلاق التطبيق بعد ثانيتين
+                    setTimeout(() => {
+                        if (window.Telegram?.WebApp) {
+                            window.Telegram.WebApp.close();
+                        } else {
+                            window.close();
+                        }
+                    }, 2000);
+
+                } else {
+                    throw new Error(data.error || 'حدث خطأ أثناء الاختصار');
+                }
+
+            } catch (error) {
+                status.innerText = '❌ ' + error.message;
+                status.style.color = '#dc3545';
+                
+                // إرجاع الزرار لحالته
+                btn.disabled = false;
+                btnText.style.display = 'inline';
+                spinner.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
